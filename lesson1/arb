@@ -1,0 +1,19 @@
+
+require 'prime'
+
+def odd_not_prime(limit)
+  result = []
+  
+  (1..limit).each do |current_integer|toinght looks good. thats around 7pm fo mr
+    if !Prime.prime?(current_integer) &&
+      current_integer.odd?
+    end
+    result << current_integer
+  end
+  
+  result.size
+end
+
+p odd_not_prime(15) # == 3
+p odd_not_prime(48) == 10
+p odd_not_prime(82) == 20
