@@ -185,10 +185,12 @@ UI:
   dealer_hand: "Dealer has: "
   player_hand: "You have: "
   hit_stay: "Hit or stay?"
+  dealers_turn: "Dealer's turn"
   player_bust: "You're bust!"
-  dealer_but: "Dealer is bust!"
+  dealer_bust: "Dealer is bust!"
   you_won: "You won!"
   dealer_won: "Dealer won!"
+  again: "Play again ('y'/'n')?"
   sign_off: "Thanks for playing Twenty-One, good bye!"
 }
 =end
