@@ -1,11 +1,8 @@
 # Tic Tac Toe (Bonus Features)
 
-# Completed up to 5b.
-# TODO: 5c onwards
-
 INITIAL_MARKER = ' '
-PLAYER_MARKER = 'X'
-COMPUTER_MARKER = 'O'
+FIRST_PLAYER = 'X'
+SECOND_PLAYER = 'O'
 
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
@@ -26,9 +23,9 @@ def joinor(arr, delimiter = ', ', word = 'or')
 end
 
 # rubocop:disable Metrics/AbcSize
-def display_board(brd)
+def display_board(brd, player_marker, computer_marker)
   system('clear')
-  puts "You're #{PLAYER_MARKER}. Computer is #{PLAYER_MARKER}"
+  puts "You're #{player_marker}. Computer is #{computer_marker}"
   puts ""
   puts "     |     |"
   puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
@@ -55,7 +52,7 @@ def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
-def player_places_piece!(brd)
+def player_places_piece!(brd, player_marker)
   square = ''
   loop do
     prompt "Choose a square (#{joinor(empty_squares(brd))}):"
@@ -63,7 +60,7 @@ def player_places_piece!(brd)
     break if empty_squares(brd).include?(square)
     prompt "Sorry, that's not a valid choice."
   end
-  brd[square] = PLAYER_MARKER
+  brd[square] = player_marker
 end
 
 def immediate_opportunity(brd, marker)
@@ -80,19 +77,19 @@ def immediate_opportunity(brd, marker)
   opportunities.size.zero? ? nil : opportunities.sample
 end
 
-def computer_places_piece!(brd)
-  threatened_square = immediate_opportunity(brd, PLAYER_MARKER)
-  computer_opportunity = immediate_opportunity(brd, COMPUTER_MARKER)
+def computer_places_piece!(brd, player_marker, computer_marker)
+  computer_opportunity = immediate_opportunity(brd, computer_marker)
+  threatened_square = immediate_opportunity(brd, player_marker)
   
   if computer_opportunity
-    brd[computer_opportunity] = COMPUTER_MARKER
+    brd[computer_opportunity] = computer_marker
   elsif threatened_square
-    brd[threatened_square] = COMPUTER_MARKER
+    brd[threatened_square] = computer_marker
   elsif brd[5] == INITIAL_MARKER
-    brd[5] = COMPUTER_MARKER
+    brd[5] = computer_marker
   else
     square = empty_squares(brd).sample
-    brd[square] = COMPUTER_MARKER
+    brd[square] = computer_marker
   end
 end
 
@@ -100,15 +97,15 @@ def board_full?(brd)
   empty_squares(brd).empty?
 end
 
-def someone_won?(brd)
-  !!detect_winner(brd)
+def someone_won?(brd, player_marker, computer_marker)
+  !!detect_winner(brd, player_marker, computer_marker)
 end
 
-def detect_winner(brd)
+def detect_winner(brd, player_marker, computer_marker)
   WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(PLAYER_MARKER) == 3
+    if brd.values_at(*line).count(player_marker) == 3
       return 'Player'
-    elsif brd.values_at(*line).count(COMPUTER_MARKER) == 3
+    elsif brd.values_at(*line).count(computer_marker) == 3
       return 'Computer'
     end
   end
@@ -116,28 +113,76 @@ def detect_winner(brd)
   nil
 end
 
+def place_piece!(brd, current_player, player_marker, computer_marker)
+  if current_player == 'Player'
+    player_places_piece!(brd, player_marker)
+  else
+    computer_places_piece!(brd, player_marker, computer_marker)
+  end
+end
+
+def alternate_player(current_player)
+  current_player == 'Player' ? 'Computer' : 'Player'
+end
+
+### Main ###
+system('clear')
+
 player_wins = 0
 computer_wins = 0
 
+who_chooses = nil
+first_player = nil
+loop do
+  prompt "Who chooses who goes first, player or computer ('p' or 'c')?"
+  who_chooses = gets.chomp.downcase
+  break if ['p', 'c'].include?(who_chooses)
+  prompt "Sorry, that's not a valid choice."
+end
+
+if who_chooses == 'p'
+  loop do
+    prompt "Who should go first, player or computer ('p' or 'c')?"
+    first_player = gets.chomp.downcase
+    break if ['c', 'p'].include?(first_player)
+    prompt "Sorry, that's not a valid choice."
+  end
+else
+  first_player = ['c', 'p'].sample
+end
+
+if first_player == 'p'
+  player_marker = FIRST_PLAYER
+  computer_marker = SECOND_PLAYER
+else
+  player_marker = SECOND_PLAYER
+  computer_marker = FIRST_PLAYER
+end
+
+# Main program loop
 loop do
   board = initialize_board
-  display_board(board)
+  display_board(board, player_marker, computer_marker)
+  current_player = (first_player == 'p' ? 'Player' : 'Computer')
+
+  # Individual game loop
   loop do
-    display_board(board)
+    display_board(board, player_marker, computer_marker)
+    place_piece!(board, current_player, player_marker, computer_marker)
+    current_player = alternate_player(current_player)
 
-    player_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-
-    computer_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
+    if someone_won?(board, player_marker, computer_marker) || 
+       board_full?(board)
+      break
+    end
   end
 
-  display_board(board)
+  display_board(board, player_marker, computer_marker)
 
-  if detect_winner(board) == 'Player'
+  if detect_winner(board, player_marker, computer_marker) == 'Player'
     prompt "Player wins!"
     player_wins += 1
-  elsif detect_winner(board) == 'Computer'
+  elsif detect_winner(board, player_marker, computer_marker) == 'Computer'
     prompt "Computer wins!"
     computer_wins += 1
   else

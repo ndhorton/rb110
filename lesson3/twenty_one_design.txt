@@ -1,0 +1,196 @@
+=begin
+
+Player and dealer both wish to get as close to 21 as possible
+but exceeding 21 loses the game
+
+2-10 cards worth face value
+royalty worth 10
+ace worth 1 or 11 depending on which is most advantageous
+
+a thought on how to handle multiple aces:
+  each ace is evaluated first as being worth 1
+  for each ace
+    if score + 10 > 21
+      do nothing
+    else
+      score += 1
+      consider next ace
+      ????
+        maybe not: 2 * 11 == 22 so only one ace can ever be worth 11
+
+one strategy: an ace is always worth 1 on the general pass through
+the player's and then, as a separate check after iterating,
+if hand contains at least one ace && score - 1 + 11 <= 21
+  score -= 1
+  score += 11 
+  (obviously you could just add 10 rather than the two seperate ops)
+  then return (no other ace can be worth more than 1)
+
+The score is calculated dynamically each time a new card is drawn,
+  so the aces can be determined as above each time
+
+player can see their own hand
+player can see only one of the dealer's cards
+
+1. Intialize and shuffle a deck of cards
+2. Deal player's and dealer's hands 
+   (not sure whether this is one hand after another or one card after another)
+3. Ask player if they wish to take another card or stay
+4. if they want another card
+  - deal
+  - if bust, go to 7
+  - otherwise, go to 3
+  if they stick, go to 5
+5. dealer's turn.
+6. if dealer is bust or dealer score >= 17, go to 7
+   if dealer has less then 17, deal card, go to 5
+7. calculate final scores
+8. declare winner
+
+DS:
+
+The deck needs to have values and suits
+So each card could be a 2-element array, element 0 -> value, element 1 -> suit
+The deck could simply be an array of these 2-element arrays
+
+It would be useful to have a way to:
+  convert face value cards directly to their integer value
+  convert royal cards to their fixed value
+  aces dealt with seperately
+
+A simple method would make most sense
+
+subroutine card_value(card)
+Given a 2-element array, card
+If FACE_CARDS.include?(card[0])
+  return 10
+Else if card[0] == 'ace'
+  return 1
+Else
+  return card[0]
+End if
+
+subroutine hand_value(hand)
+Given an array of cards (2-element arrays), hand
+Set score := 0
+Iterate through each card in hand
+  score += card_value(card)
+Iterate through each card in hand
+  if card is ace && (score + 10) <= 21
+    score += 10
+    break
+return score
+
+subroutine show_all_cards(hand, message)
+Set values := empty array
+Iterate through each card in hand
+  push card[0] to values
+print("=> " + message)
+print(values[0..-2].join(', ') << " and " << values.last)
+print newline
+return
+
+subroutine show_partial_dealer(hand)
+Print("Dealer has: " << hand.first.first)
+if hand.size > 2
+  print (" and {hand.size - 1} unknown cards")
+else
+  print(" and unknown card")
+fi
+print newline
+return
+
+There seems to be no significance to the suits, but it is a requirement to keep track
+
+Building the deck DS:
+
+you could have the suits as an array of symbols or strings
+
+the deck begins as an empty array
+iterate over the suits,
+  - Iterate from 2 to 10
+  -- append array containing current number and current suit to deck array
+  - Iterate over faces array
+  -- append array containing current royal and current suit to deck array
+  append array containing ace and current suit to deck array
+
+Choice:
+1. The deck and both player and dealer hands are initialized
+   in the main program flow and passed to scoring methods
+   rather than having seperate variables keeping track of scores
+
+2. Seperate scores would allow simpler bust? method and fewer
+   calls to the scoring method but with additional complexity
+   in initial design
+   Maybe write the scoring method first and decide
+
+structure and flow:
+
+Methods, constants, etc
+
+print welcome message
+
+Main game loop
+  Play loop
+    initialize deck
+    initialize player and dealer hands
+    
+    Player turn loop
+      Validate input loop
+        Ask hit or stay?
+        If input is 'hit' OR input is 'stay'
+          break from validate input loop
+      End validate input loop
+      
+      If player stayed
+        break from player turn loop
+      
+      deal card
+      
+      If player is bust 
+        break from player turn loop
+    End player turn loop
+
+    If player is bust
+      break from play loop
+    
+    Dealer turn loop
+      If bust OR hand is worth 17 or more
+        break
+      Else
+        hit
+    End dealer turn loop
+  End play loop
+
+  if player bust
+    declare player bust
+  else if dealer bust
+    declare dealer bust
+  else if player wins
+    declare player winner
+  else if dealer wins
+    declare dealer winner
+  
+  ask player if they want to play again
+  if they do not say yes
+    break
+End main game loop
+
+say goodbye
+
+UI:
+{
+  greeting: "Welcome to Twenty-One!"
+
+  dealer_hand: "Dealer has: "
+  player_hand: "You have: "
+  hit_stay: "Hit or stay?"
+  dealers_turn: "Dealer's turn"
+  player_bust: "You're bust!"
+  dealer_bust: "Dealer is bust!"
+  you_won: "You won!"
+  dealer_won: "Dealer won!"
+  again: "Play again ('y'/'n')?"
+  sign_off: "Thanks for playing Twenty-One, good bye!"
+}
+=end
