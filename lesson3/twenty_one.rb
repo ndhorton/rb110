@@ -71,17 +71,17 @@ def show_one_card(hand, message)
   prompt "#{message}#{hand.first.first} and #{hand.size-1} unknown #{single_plural}"
 end
 
-def declare_winner(player_hand, dealer_hand)
+def calculate_result(player_hand, dealer_hand)
   if bust?(player_hand)
-    prompt "You're busted! Dealer wins!"
+    "You're busted! Dealer wins!"
   elsif bust?(dealer_hand)
-    prompt "Dealer is busted! You win!"
+    "Dealer is busted! You win!"
   elsif score(player_hand) > score(dealer_hand)
-    prompt "You win!"
+    "You win!"
   elsif score(dealer_hand) > score(player_hand)
-    prompt "Dealer wins!"
+    "Dealer wins!"
   else
-    prompt "It's a tie!"
+    "It's a tie!"
   end
 end
 
@@ -119,7 +119,7 @@ loop do
   end
   
   unless bust?(player_hand)
-    # Dealer's turn
+    # Dealer's turn animation
     system('clear')
     print "=> #{TEXT[:dealers_turn]}."
     3.times do |_|
@@ -136,7 +136,7 @@ loop do
   system('clear')
   show_hand(dealer_hand, TEXT[:dealer_has])
   show_hand(player_hand, TEXT[:player_has])
-  declare_winner(player_hand, dealer_hand)
+  prompt calculate_result(player_hand, dealer_hand)
 
   puts
   prompt TEXT[:again]
