@@ -163,11 +163,10 @@ loop do
       prompt TEXT[:dealer_hits]
       system('sleep 1.6')
     end
-  end
-
-  unless bust?(dealer_hand)
-    prompt TEXT[:dealer_stays]
-    system('sleep 1.6')
+    unless bust?(dealer_hand)
+      prompt TEXT[:dealer_stays]
+      system('sleep 1.6')
+    end
   end
 
   system('clear')
