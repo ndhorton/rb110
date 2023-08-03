@@ -113,6 +113,105 @@ end
 
 
 
+## Other Methods that Call the `<=>` Method ##
+
+### 1 ###
+
+```ruby
+[4, 3, 5, 2, 1].min
+```
+
+
+
+### 2 ###
+
+```ruby
+[4, 3, 5, 2, 1].min(2)
+```
+
+
+
+### 3
+
+```ruby
+ruminants = %w(llama Yak sheep Horse cow)
+
+ruminants.min do |a, b|
+  a.downcase <=> b.downcase
+end
+```
+
+
+
+### 4 ###
+
+```ruby
+[4, 3, 5, 2, 1].max
+```
+
+
+
+### 5
+
+```ruby
+['a', 'f', 'd', 'l', 'z'].max(3)
+```
+
+
+
+### 6
+
+```ruby
+lizards = ['Iguana', 'basilisk', 'Gecko', 'Water dragon']
+
+lizards.max do |a, b|
+  a.downcase <=> b.downcase
+end
+```
+
+
+
+
+
+### 7
+
+```ruby
+[4, 3, 5, 2, 1].minmax
+```
+
+
+
+
+
+### 8
+
+```ruby
+["Fortran", "Lisp", "Algol", "C", "Simula", "Smalltalk"].minmax do |a, b|
+    a.size <=> b.size
+end
+```
+
+
+
+
+
+### 9
+
+```ruby
+languages = {
+  smalltalk: 1980,
+  algol: 1958,
+  simula: 1968,
+  fortran: 1957,
+  lisp: 1960,
+  c: 1972
+}
+
+languages.minmax_by { |language, year| year }
+```
+
+
+
 ## Nested Data Structures ###
 
 ### 1 ###
