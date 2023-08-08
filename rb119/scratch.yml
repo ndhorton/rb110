@@ -1,0 +1,4 @@
+# scratch.yml
+
+greeting: "Hello, <%= name %>!"
+age: <%= age + 5 %>
