@@ -1246,7 +1246,13 @@ arr2 = [{first: ['a', 'b', 'c'], second: ['d', 'e', 'f']}, {third: ['g', 'h', 'i
 arr2[1][:third][0]
 ```
 
+On line 1, local variable `arr2` is initialized to the array of hashes `[{first: ['a', 'b', 'c'], second: ['d', 'e', 'f']}, {third: ['g', 'h', 'i']}]`.
 
+Next, on line 3, element reference method `Array#[]` is called on `arr2` with `1` passed as argument, returning the hash element at index `1`: `{third: ['g', 'h', 'i']}`. Chained on this return value is a call to `Hash#[]` with the symbol `:third` passed as argument; this returns the value object, an Array, associated with the key `:third`: `['g', 'h', 'i']`. Chained on this return value is another call to `Array#[]` with `0` passed as argument. This final method call returns the String element at index `0`: `"g"`.
+
+This example demonstrates chaining element reference method calls in order to return an innermost element in a nested data structure.
+
+--5:05
 
 ### 3c ###
 
@@ -1257,7 +1263,13 @@ arr3 = [['abc'], ['def'], {third: ['ghi']}]
 arr3[2][:third][0][0] 
 ```
 
+On line 1, local variable `arr3` is initialized to the array `[['abc'], ['def'], {third: ['ghi']}]`.
 
+Next, on line 4, element reference method `Array#[]` is called on `arr3` with `2` passed as argument, returning the hash element at index `2`: `{third: ['ghi']}`. Chained on this return value is a call to `Hash#[]` with the symbol `:third` passed as argument, returning the associated Array object `['ghi']`. Chained on this return value is another call to `Array#[]` with `0` passed as argument, returning the string element at index `0`: `"ghi"`. Chained on this return value is a call to the string slicing method `String#[]` with `0` passed as argument. This final call in the chain returns a new String object whose value is the same character at index `0` of the caller: `"g"`.
+
+This example demonstrates using a chain of element reference calls in order to return inner elements from a nested data structure.
+
+--5:27
 
 ### 3d ###
 
@@ -1267,7 +1279,13 @@ hsh1 = {'a' => ['d', 'e'], 'b' => ['f', 'g'], 'c' => ['h', 'i']}
 hsh1['b'][1]
 ```
 
+On line 1, local variable `hsh1` is initialized to the hash `{'a' => ['d', 'e'], 'b' => ['f', 'g'], 'c' => ['h', 'i']}`.
 
+Next, on line 3, the hash value reference method `Hash#[]` is invoked on `hsh1` with `'b'` passed as argument; this returns the value object associated with the key `"b"`, the array `['f', 'g']`. Chained on this return value is a call to array element reference method `Array#[]` with `1` passed as argument; this returns the string element at index `1`: `"g"`.
+
+This example demonstrates using chained element reference method calls to access inner elements in a nested data structure.
+
+--3:31
 
 ### 3e ###
 
@@ -1278,7 +1296,13 @@ hsh2 = {first: {'d' => 3}, second: {'e' => 2, 'f' => 1}, third: {'g' => 0}}
 hsh2[:third].key(0) 
 ```
 
+On line 1, local variable `hsh2` is initialized to the hash `{first: {'d' => 3}, second: {'e' => 2, 'f' => 1}, third: {'g' => 0}}`.
 
+Next, on line 4, the hash value reference method `Hash#[]` is called on `hsh2` with `:third` passed as argument. This returns the value object associated with the key `:third`, the hash `{'g' => 0}`. Chained on this return value is a call the the key reference method `Hash#key` with `0` passed as argument. This returns the key object associated with the value object `0`, the string `"g"`.
+
+This example demonstrates using chained element reference method calls in order to return inner elements from a nested data structure.
+
+--2:47
 
 ### 4a ###
 
@@ -1288,7 +1312,13 @@ arr1 = [1, [2, 3], 4]
 arr1[1][1] = 4
 ```
 
+ On line 1, local variable `arr1` is initialized to the array `[1, [2, 3], 4]`.
 
+Next, on line 3, the element reference method `Array#[]` is called on `arr1` with `1` passed as argument. This returns the inner array at index `1`, `[2, 3]`. Chained on this return value is a call to the destructive element assignment setter method `Array#[]=` with `1` and `4` passed as arguments. This mutates this inner array so that index `1` now points to Integer object `4`. Thus, after this chain of method calls, the state of the `arr1` array is now `[1, [2, 4], 4]`.
+
+This example demonstrates using a chain of element reference and element assignment method calls in order to reassign elements in a collection object inside a nested data structure.
+
+--5:40
 
 ### 4b ###
 
@@ -1298,7 +1328,13 @@ arr2 = [{a: 1}, {b: 2, c: [7, 6, 5], d: 4}, 3]
 arr2[2] = 4
 ```
 
+On line 1, local variable `arr2` is initialized to the array `[{a: 1}, {b: 2, c: [7, 6, 5], d: 4}, 3]`.
 
+Next, on line 3, the element assignment setter method `Array#[]=` is invoked on `arr2` with `2` passed as the index argument and `4` passed as the second argument. This destructive method will mutate the `arr2` array so that index `2` now points to the Integer object `4`. Thus the state of the `arr2` array after this method returns will be `[{a: 1}, {b: 2, c: [7, 6, 5], d: 4}, 4]`.
+
+This example demonstrates the syntax of the array element assignment method `Array#[]=`.
+
+--3:31.
 
 ### 4c ###
 
@@ -1308,7 +1344,13 @@ hsh1 = {first: [1, 2, [3]]}
 hsh1[:first][2][0] = 4
 ```
 
+On line 1, local variable `hsh1` is initialized to the hash `{first: [1, 2, [3]]}`.
 
+Next, on line 3, the hash value element reference method `Hash#[]` is called on `hsh1` with `:first` passed as argument. This returns the value object associated with the key `:first`, the array `[1, 2, [3]]`. Chained on this return value is a call to array element reference method `Array#[]` with `2` passed as argument. This returns the element at index `2`, a second-level inner array `[3]`. Chained on this return value is a call to the destructive array element assignment method `Array#[]=` with `0` passed as the index argument and `4` passed as the value argument. This mutates the second-level inner array so that index `0` now points to the integer object `4`. Thus the state of the `hsh1` hash after this chain of method calls is `{first: [1, 2, [4]]}`.
+
+This example demonstrates using a chain of element reference and element assignment method calls in order to mutate inner collections in a nested data structure.
+
+--6:47
 
 ### 4d ###
 
@@ -1318,7 +1360,13 @@ hsh2 = {['a'] => {a: ['1', :two, 3], b: 4}, 'b' => 5}
 hsh2[['a']][:a][2] = 4
 ```
 
+On line 1, local variable `hsh2` is initialized to the hash `{['a'] => {a: ['1', :two, 3], b: 4}, 'b' => 5}`.
 
+Next, on line 3, hash element reference method `Hash#[]` is called on `hsh2` with array `['a']` passed as argument. This returns the value object associated with key `'[a]'`, the inner hash ` {a: ['1', :two, 3], b: 4}`. Chained on this return value is another call to `Hash#[]` with `:a` passed as argument, which returns the value object associated with key `:a`, the array `['1', :two, 3]`. Chained on this return value is a call to the array element assignment method `Array#[]=` with `2` passed as the index argument and `4` passed as the second argument. This destructive method will mutate this inner array so that index `2` now points to Integer object `4`. Thus the state of the `hsh2` hash after this chain of method calls is `{['a'] => {a: ['1', :two, 4], b: 4}, 'b' => 5}`
+
+This example demonstrates using chained element reference and element assignment method calls in order to mutate inner collections in a nested data structure.
+
+--6:31
 
 ### 5 ###
 
@@ -1339,7 +1387,27 @@ end
 p total_male_age
 ```
 
+On line 1, local variable `munsters` is initialized to the hash:
 
+```ruby
+{
+  "Herman" => { "age" => 32, "gender" => "male" },
+  "Lily" => { "age" => 30, "gender" => "female" },
+  "Grandpa" => { "age" => 402, "gender" => "male" },
+  "Eddie" => { "age" => 10, "gender" => "male" },
+  "Marilyn" => { "age" => 23, "gender" => "female"}
+}
+```
+
+Next, on line 9, local variable `total_male_age` is initialized to `0`. Following this, on line 10, the `Hash#each_value` method is called on `munsters` with a `do...end` block. `each_value` iterates over only the value objects in the calling hash, passing each nested hash object in turn to the block to be assigned to block parameter `details`. `each_value` ignores the return value from the block and ultimately returns a reference to the caller.
+
+Within the block, on line 11, an `if` modifier check whether the value object returned by calling the hash element reference method `Hash#[]` on the hash currently referenced by `details` with `"gender"` passed as the key argument is equal to the string `"male"`. If so, the integer returned by calling `details["age"]` is added to the integer referenced by `total_male_age` and the return value reassigned back to `total_male_age`, using `+=` syntactic sugar.
+
+Therefore, this invocation of `each_value` with a block will iteratively add the integer ages from the inner hashes to `total_male_age` if the `"gender"` of the person represented by the hash is `"male"`. So on line 14, when `total_male_age` is passed to the `Kernel#p` method, the output to the screen will be `444`.
+
+This example demonstrates the `Hash#each_value` method with a block to iterate over the value objects in a hash.
+
+--11:34
 
 ### 6 ###
 
@@ -1356,6 +1424,34 @@ munsters.each_pair do |name, details|
   puts "#{name} is a #{details['age']}-year-old #{details['gender']}"
 end
 ```
+
+On line 1, local variable `munsters` is initialized to the hash:
+
+```ruby
+{
+  "Herman" => { "age" => 32, "gender" => "male" },
+  "Lily" => { "age" => 30, "gender" => "female" },
+  "Grandpa" => { "age" => 402, "gender" => "male" },
+  "Eddie" => { "age" => 10, "gender" => "male" },
+  "Marilyn" => { "age" => 23, "gender" => "female"}
+}
+```
+
+Next, on line 9, the `Hash#each_pair` method is invoked on `munsters` with a `do...end` block. The `each_pair` method performs iteration, passing each String key object to the block in turn to be assigned to block parameter `name` and each nested Hash value object is assigned to parameter `details`. `each_pair` ignores the block return value and returns a reference to the caller.
+
+Within the block, on line 10, a string involving string interpolation is passed to the `Kernel#puts` method. The first interpolation is the string currently referenced by `name`. The second interpolation is the return value of calling the hash element reference method `Hash#[]` on the nested hash currently referenced by `details` with `'age'` passed as argument. The third interpolation is the result of calling `Hash#[]` on `details` again with `'gender'` passed as argument. The string is output to screen and `puts` returns `nil` as it always does. This is the last evaluated expression in the block and so forms its return value but `each_pair` ignores this.
+
+Therefore this invocation of `each_pair` iterates through the hash outputting a string to screen on each iteration:
+
+```
+Herman is a 32-year-old male
+Lily is a 30-year-old female
+Grandpa is a 402-year-old male
+Eddie is a 10-year-old male
+Marilyn is a 23-year-old female
+```
+
+--7:23
 
 
 
