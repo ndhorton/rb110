@@ -32,16 +32,81 @@ A `nil` return from the `<=>` method causes `sort` to throw an `ArgumentError`.
 
 ## `Enumerable#sort_by` with a block
 
+The `sort_by` method returns a new array whose elements are the elements from
+the calling collection sorted according to the criterion given in the block.
+In order to do this, `sort_by` passes each element in turn to the block to be
+assigned to the block parameter. `sort_by` then uses the return value of
+each element's block iteration as a sort key that is used in place of the 
+associated element in the series of comparisons `sort_by` makes to
+determine the relative valuation of elements. These comparisons are made with
+the `<=>` method of the sort key objects returned by the block.
 
+## `String#upto` ##
 
-## `String#upto`
+The `Stringupto` method iterates over a sequence of String objects that
+are the result of successive calls to the `String#succ` method. On the first
+iteration the caller is passed to the block to be assigned to the block
+parameter. On the second iteration, the return value of calling `succ` on
+the caller is passed to the block. On the third, the return value of calling
+`succ` on the previous return value of `succ` is passed to the block, and so
+on. Iteration stops when the string passed as argument is reached, which
+must therefore be a string whose character-wise ASCII valuation is greater
+than the caller. `upto` ignores the return value from the block, and returns
+a reference to the calling string.
 
+## `String#succ` ##
 
+The `String#succ` method returns a new string that is the successor to the
+caller; this is determined by incrementing characters.
 
-## `String#succ`
+The character to be incremented will be either the rightmost
+alphanumeric character or, if there are none, the rightmost character. A
+digit will be incremented to the next digit; if the digit is '9', this
+will be rolled over to `0`, carrying to increment the character to the
+left. If it is necessary in order to express the carry, another digit is
+inserted to the left of the digit that is rolling over.
 
+The successor to a letter character is the next letter of the same case.
+Letters will rollover and carry similarly to digits, inserting another
+letter of the same case to the left of the letter that is rolling over
+if this is necessary to express the carry.
 
+Carrying can occur between alphabetic and numeric characters, so
+`"a9".succ` will return `"b0"`.
 
+The successor to a non-alphanumeric character is the next character in
+character set, rolling over and carrying if necessary.
+
+If called on an empty string, the return value will be a new empty string.
+
+`succ` will thus return a new string with with either the rightmost
+alphanumeric character incremented, carrying and rolling over if 
+necessary, or if there are no alphanumerics, the rightmost character
+incremented, carrying and rolling over if necessary.
+
+## `Array#min`/`Enumerable#min` without block ##
+
+The `min` method returns the element in the calling collection determined to be the least in value. To determine this, the `min` method makes a series of comparisons between pairs of elements by invoking the `<=>` method appropriate to the objects being compared, with one element as caller and one as argument. The `<=>` method returns `-1` if the caller is lesser than the argument, `0` if they are equal, `1` if the caller is greater than the argument, and `nil` if they cannot be compared. The `min` method will throw an `ArgumentError` if it receives a `nil` return from any of these comparisons.
+
+## `Array#max`/`Enumerable#max` without block ##
+
+The `max` method returns the element in the calling collection determined to be the greatest in value. To determine this, the `max` method makes a series of comparisons between pairs of elements by invoking the `<=>` method appropriate to the objects being compared, with one element as caller and one as argument. The `<=>` method returns `-1` if the caller is lesser than the argument, `0` if they are equal, `1` if the caller is greater than the argument, and `nil` if they cannot be compared. The `max` method will throw an `ArgumentError` if it receives a `nil` return from any of these comparisons.
+
+## `Array#minmax`/`Enumerable#max` without block ##
+
+The `minmax` method returns a two element array whose first element is the element from the calling collection determined to be the least in value and whose second is the element from the calling collection determined to be the greatest in value. To determine this, the `minmax` method makes a series of comparisons between pairs of elements by invoking the `<=>` method appropriate to the class of object being compared, with one element as caller and one as argument. The `<=>` method returns `-1` if the caller is lesser than the argument, `0` if they are equal, `1` if the caller is greater than the argument, and `nil` if they cannot be compared. The `minmax` method will throw an `ArgumentError` if it receives a `nil` return from any of these comparisons.
+
+## `Enumerable#min_by` ##
+
+The `min_by` method returns the element from the calling collection determined to be of least value according to a given criterion. To determine this, `min_by` passes each element to the given block in turn to be assigned to a parameter; the return value from that block execution forms the criterion by which comparisons between elements are to be made. The `min_by` method then makes a series of comparisons in a similar manner to `min`, yet these comparisons are between the block return values associated with each element from the caller rather than between the elements themselves. The element determined to be of least value according to its associated block return value will then form the return value of the `min_by` method.
+
+## `Enumerable#max_by` ##
+
+The `max_by` method returns the element from the calling collection determined to be of greatest value according to a given criterion. To determine this, `max_by` passes each element to the given block in turn to be assigned to a parameter; the return value from that block execution forms the criterion by which comparisons between elements are to be made. The `min_by` method then makes a series of comparisons in a similar manner to `max` except these comparisons are between the block return values associated with each element from the caller rather than between the elements themselves. The element determined to be of greatest value according to its associated block return value will then be returned by the `max_by` method.
+
+## `Enumerable#minmax_by` ##
+
+The `minmax_by` method returns a two element array; the first and second elements of this returned array are, respectively, the element from the calling collection determined to be of least value and the element determined to be of greatest value according to a given criterion. To determine this, `minmax_by` passes each element in turn to the given block to be assigned to a parameter; the return value from that block execution forms the criterion by which comparisons between elements are to be made. The `minmax_by` method then makes a series of comparisons in a similar manner to `minmax` except these comparisons are between the block return values associated with each element from the calling collection rather than between the elements themselves. The `minmax_by` method then returns a two-element array whose elements are the two elements determined to be least and greatest according to this comparison criterion.
 
 
 ## pass-by-reference and *pass-by-value* ##

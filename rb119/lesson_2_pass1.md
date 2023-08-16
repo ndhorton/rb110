@@ -858,7 +858,7 @@ end
 
 On line 1, we initialize local variable `arr` to the array of arrays `[['1', '8', '11'], ['2', '6', '13'], ['2', '12', '15'], ['1', '8', '9']]`.
 
-Next, on line 3, we call the `Enumerable#sort_by` method on `arr` with a `do...end` block. The `sort_by` method method returns a new array containing the elements from the caller sorted in the order determined by the block. `sort_by` passes each sub-array element to the block to be assigned to the block parameter `sub_arr`. The `sort_by` method uses each element's block iteration return value as a sort key, which is used (in place of the associated element) in the comparisons `sort_by` makes in order to return a sorted array of the elements from the caller.
+Next, on line 3, we call the `Enumerable#sort_by` method on `arr` with a `do...end` block. The `sort_by` method returns a new array containing the elements from the caller sorted in the order determined by the block. `sort_by` passes each sub-array element to the block to be assigned to the block parameter `sub_arr`. The `sort_by` method uses each element's block iteration return value as a sort key, which is used (in place of the associated element) in the comparisons `sort_by` makes in order to return a sorted array of the elements from the caller.
 
 Within the block, on line 4, the `Array#map` method is called on the array element currently referenced by `sub_arr` with a `do...end` block. The `map` method iterates through the string elements in the calling array passing each in turn to the block to be assigned to block parameter `num`. `map` uses the return value from the block in order to perform transformation, returning a new array whose elements are the return values from the block.
 
@@ -1151,6 +1151,67 @@ books.sort_by do |book|
 end
 ```
 
+On line 1, local variable `books` is initialized to an array of hashes:
+```ruby
+books = [
+  {title: 'One Hundred Years of Solitude', author: 'Gabriel Garcia Marquez', published: '1967'},
+  {title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', published: '1925'},
+  {title: 'War and Peace', author: 'Leo Tolstoy', published: '1869'},
+  {title: 'Ulysses', author: 'James Joyce', published: '1922'}
+]
+```
+
+Next, the `Enumerable#sort_by` method is invoked on `books` with a
+`do...end` block.
+
+The `sort_by` method returns a new array whose elements are the elements from
+the calling collection sorted according to the criterion given in the block.
+In order to do this, `sort_by` passes each hash element in turn to the block to
+be assigned to the block parameter `book`. `sort_by` then uses the return value
+of each element's block iteration as a sort key that is used in place of the 
+associated element in the series of comparisons `sort_by` makes to
+determine the relative valuation of elements. These comparisons are made with
+the `<=>` method of the sort key objects returned by the block.
+
+Within the block, hash element reference method `Hash#[]` is invoked on the
+hash currently referenced by `book` to return the value object associated
+with the key `:published`. This is the last evaluated expression in the block
+and so forms the return value.
+
+On every iteration, the return value from the block used as a sort key for
+comparisons will be a String object and therefore `String#<=>` is used for
+comparisons.
+
+The `String#<=>` method performs character-wise comparison between calling
+string and argument based on ASCII table placement order, with later
+placement in the ASCII table signifying greater value. Character-wise
+comparison means that the characters at index `0` in caller and argument
+are compared by ASCII value and if no difference is found then the
+characters at index `1` are compared and so on until a difference is found.
+If no difference is found up to the length of the shorter string, the
+longer string is considered greater. If no difference is found in equal-
+sized strings, the strings are considered equal. `<=>` makes this comparison
+in order to return a signal value: `-1` if the caller is lesser, `0` if
+caller and argument are equal, and `1` if the caller is greater. If the
+argument cannot be compared to the caller, `<=>` returns `nil`, which
+would cause `sort_by` to throw an `ArgumentError`.
+
+This invocation of `sort_by` will therefore return a new array containing
+the hash elements from the caller sorted according to the strings associated
+to their `:published` keys. Although these string values represent numbers,
+they are not Numeric objects but Strings, and so the hashes are sorted
+according to the ASCII value of the strings. However, since all of these
+strings contain the same number of characters, the sort order is the same
+as though they were Numerics:
+
+```ruby
+books = [
+  {title: 'War and Peace', author: 'Leo Tolstoy', published: '1869'},
+  {title: 'Ulysses', author: 'James Joyce', published: '1922'},
+  {title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', published: '1925'},
+  {title: 'One Hundred Years of Solitude', author: 'Gabriel Garcia Marquez', published: '1967'}
+]
+```
 
 
 ### 3a ###
@@ -1160,7 +1221,21 @@ arr1 = ['a', 'b', ['c', ['d', 'e', 'f', 'g']]]
 
 arr1[2][1][3]
 ```
+On line 1, local variable `arr1` is initialized to the three-level
+unevenly-nested array `['a', 'b', ['c', ['d', 'e', 'f', 'g']]]`.
 
+On line 3, chained element references are used to return a String
+element from the innermost array. The first call to `Array#[]` with
+`2` passed as argument returns the second-level sub-array
+`['c', ['d', 'e', 'f', 'g']]`. Chained on this is the call `[1]`, which
+returns the third-level nested array `['d', 'e', 'f', 'g']`. Finally,
+the call `[3]` returns the element at index `3` of this innermost array
+`"g"`.
+
+This example demonstrates using chained calls to `Array#[]` in order
+to access inner elements in nested array-based data structures.
+
+--6:10
 
 
 ### 3b ###
