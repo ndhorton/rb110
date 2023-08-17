@@ -1262,7 +1262,8 @@ Next, on line 3, element reference method `Array#[]` is called on `arr2` with `1
 This example demonstrates chaining element reference method calls in order to return an innermost element in a nested data structure.
 
 --5:05
->>>>>>> f1bc0de6ed0e05c57faf1df19be8f45aa982c99d
+
+
 
 ### 3c ###
 
@@ -1485,6 +1486,8 @@ On line 5, `+=` syntactic sugar is used to reassign index `0` of `arr` to the in
 On line 6, array element reference method `Array#[]` is called on `arr` with `1` passed as argument. This returns the element at index `1`, the same array referenced by `b`: `[5, 8]`. The syntactic sugar `[0] -=` is used to subtract the integer referenced by `a` -- still `2` -- from the integer stored at index `0` of the nested array returned by the previous method call and reassign index `0` to the integer return value of the subtraction, which will be `3`. This reassignment operation mutates the array referenced by both index `1` of `arr` and variable `b`. 
 
 Therefore at the end of this code, `a` still references `2`, while `b` now references `[3, 8]`.
+
+This example demonstrates how Ruby variables act as pointers to objects.
 
 --13:21
 
