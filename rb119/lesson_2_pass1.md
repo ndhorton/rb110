@@ -1468,7 +1468,15 @@ arr[0] += 2
 arr[1][0] -= a
 ```
 
+On line 1, local variable `a` is initialized to the integer `2`. Next, on line 2, local variable `b` is initialized to the array `[5, 8]`. On line 3, local variable `arr` is initialized to the array `[a, b]`. At this point, index `0` of `arr` and variable `a` both reference the integer `2`, while index `1` of `arr` and variable `b` reference the array `[5, 8]`.
 
+On line 5, `+=` syntactic sugar is used to reassign index `0` of `arr` to the integer `2` greater than the integer it currently references. This operation mutates the `arr` Array object only. Now index `0` of `arr` references `4` and no longer references the same object as `a`, which continues to reference `2`.
+
+On line 6, array element reference method `Array#[]` is called on `arr` with `1` passed as argument. This returns the element at index `1`, the same array referenced by `b`: `[5, 8]`. The syntactic sugar `[0] -=` is used to subtract the integer referenced by `a` -- still `2` -- from the integer stored at index `0` of the nested array returned by the previous method call and reassign index `0` to the integer return value of the subtraction, which will be `3`. This reassignment operation mutates the array referenced by both index `1` of `arr` and variable `b`. 
+
+Therefore at the end of this code, `a` still references `2`, while `b` now references `[3, 8]`.
+
+--13:21
 
 ### 8 ###
 
