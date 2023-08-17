@@ -1246,7 +1246,13 @@ arr2 = [{first: ['a', 'b', 'c'], second: ['d', 'e', 'f']}, {third: ['g', 'h', 'i
 arr2[1][:third][0]
 ```
 
+On line 1, local variable `arr2` is initialized to the array `[{first: ['a', 'b', 'c'], second: ['d', 'e', 'f']}, {third: ['g', 'h', 'i']}]`.
 
+Next, on line 3, array element reference method `Array#[]` is called on `arr2` with `1` passed as argument. This returns the element at index `1`, the hash `{third: ['g', 'h', 'i']}`. Chained on this return value is a call to `Hash#[]` with the symbol `:third` passed as argument. This returns the value object associated with the key `:third`, which is the array `['g', 'h', 'i']`. Chained on this return value is another call to `Array#[]` with `0` passed as argument. This returns the element at index `0`, the string `"g"`.
+
+This example demonstrates using a chain of element reference method calls to access the innermost elements of a nested data structure.
+
+--5:46
 
 ### 3c ###
 
