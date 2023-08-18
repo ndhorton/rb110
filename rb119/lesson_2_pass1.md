@@ -1507,7 +1507,38 @@ hsh.each do |_, value|
 end
 ```
 
+On line 1, local variable `hsh` is initialized to the hash `{first: ['the', 'quick'], second: ['brown', 'fox'], third: ['jumped'], fourth: ['over', 'the', 'lazy', 'dog']}`. Next, local variable `vowels` is initialized to the string `'aeiou'`.
 
+After these initializations, on line 5, the `Hash#each` method is invoked on `hsh` with a `do...end` block. The `Hash#each` method performs iteration, passing each key-value pair of objects to the block to be assigned to the block parameters and executing the block once for each pair. `each` ignores the return value of the block and returns a reference to the caller. The key object is here assigned to parameter `_` which conventionally signifies that it will not be used in the block; the value object, all of which are arrays, is assigned to parameter `value`.
+
+Within the block, the `Array#each` method is called on the array currently referenced by `value` with a `do...end` block. The `Array#each` method works similarly to the `Hash#each` method except only one block parameter is needed for each element, here `str`, which is assigned to each string element in turn from the caller.
+
+Within this second-level `each` block, on line 7, the `String#chars` method is called on `str`, which returns a new array of new strings, each of which contains a single character from the calling string. Chained on this array of one-character strings is a call to `Array#each` with a `do...end` block with one parameter `char`.
+
+Within this third-level `each` block, on line 8, an `if` modifier checks whether the return value of calling `String#include?` on `vowels` with `char` passed as argument returns a truthy value. The `include?` predicate method will return `true` if the argument is a substring of the caller, `false` otherwise. If `include?` returns `true`, then `char` is passed to the `puts` method, which outputs `char` to screen and returns `nil`, since `puts` always returns `nil`. This is the last evaluated expression in the block and so forms the return value. Since there is no more code in the block, `nil` will also form the return value if the `if` condition evaluates as false, but `each` ignores this.
+
+Therefore, these nested iterators with blocks iterate through the array value objects in the outer hash, iterating in turn through the string elements, and then iterating through the characters of each string, outputting to screen only the vowels.
+
+This will output:
+
+```
+e
+u
+i
+o
+o
+u
+e
+o
+e
+e
+a
+o
+```
+
+This example demonstrates using nested iterators with blocks to iterate through the innermost elements in a nested data structure.
+
+--17:39
 
 ### 9 ###
 
@@ -1521,13 +1552,27 @@ arr.map do |sub_arr|
 end
 ```
 
+On line 1, local variable `arr` is initialized to the array `[['b', 'c', 'a'], [2, 1, 3], ['blue', 'black', 'green']]`.
 
+Next, on line 3, the `Array#map` method is called on `arr` with a `do...end` block. The `map` method iterates through the calling collection passing each element in turn to the block to be assigned to the block parameter `sub_arr`. `map` uses the return value of each element's block iteration for purposes of transformation, returning a new array whose elements are the return values from each of the caller's elements' block iterations.
+
+Within the block, on line 4, the `Array#sort` method is called on the array currently referenced by `sub_arr` with a `do...end` block.
+
+`sort` returns a new array object containing the caller's elements in sorted order. In order to do this, `sort` makes a series of comparisons between elements. When called with a block, `sort` determines sort order by passing each pair of elements to the block to be assigned to the parameters `a` and `b`. `sort` then treats the return value from the block as though it were the return value of calling the `<=>` method on the object assigned to `a` with `b` passed as argument. `sort` then arranges the elements in the new array in what would be ascending order if the return values from the block were the return values from `a <=> b`. If the block returns `-1`, the caller is considered lesser, if `0` then they are considered equal, and if `1` then the caller is considered greater. These are the signal values returned by the `<=>` comparison method and `sort` is expecting one of these.
+
+Within this second-level block, the `<=>` method is called on `b` with `a` passed as argument. This has the effect of reversing the sort order, since the positive and negative return values will be reversed if caller and argument are reversed. The array of strings will cause `String#<=>` to be called, which compares strings character-wise based on the ASCII table value of each character. If the strings are found to be equal up to the length of the  shorter string, the longer is considered greater. The `Integer#<=>` will be called for the arrays of integers, and this method simply performs the comparison based on numeric value. The return value from the `<=>` method forms the return value of the block, since this is the only expression in the block.
+
+The sorted arrays returned by the call to `sort` form the return value from the outer block, since the call to `sort` is the last evaluated expression in the block.
+
+Therefore, the outer `map` invocation returns a new array whose nested array elements are new arrays with the elements from the caller's nested arrays arranged in descending order of character-wise ASCII value for the array of strings, or descending numerical value for the integers: `arr = [['c', 'b', a'], [3, 2, 1], ['green','blue', 'black']]`
+
+This example demonstrates using nested iterators with blocks to transform the inner elements in a nested data structure.
+
+--21:17
 
 ### 10 ###
 
 ```ruby
-[{a: 1}, {b: 2, c: 3}, {d: 4, e: 5, f: 6}]
-
 new_hash = [{a: 1}, {b: 2, c: 3}, {d: 4, e: 5, f: 6}].map do |hsh|
   incremented_hash = {}
   hsh.each do |key, value|
@@ -1538,6 +1583,20 @@ end
 
 p new_hash
 ```
+
+On line 1, local variable `new_hash` is initialized to the return value of calling `Array#map` with a `do...end` block on array literal `[{a: 1}, {b: 2, c: 3}, {d: 4, e: 5, f: 6}]`.  The `Array#map` method iterates through the calling collection passing each hash element in turn to the block to be assigned to the block parameter `hsh`. `map` uses the return value of the block for purposes of transformation, returning a new array whose elements are the objects returned by the block iterations.
+
+Within the block, on line 2, local variable `incremented_hash` is initialized to an empty hash. Next, on line 3, the `Hash#each` method is invoked on `hsh` with a `do...end` block. `Hash#each` performs iterations, passing each key-value pair in turn to the block to be assigned to the block parameters `key` and `value`. `each` ignores the return value of the block and returns a reference to the caller.
+
+Within this second-level block, on line 4, a new key-value pair is initialized in `incremented_hash` with a call to the `Hash#[]=` element assignment method, with `key` passed as the key argument and the return value of the expression `value + 1` passed as the value argument. This associates the new key, referenced by `key`, with the integer `1` greater than the integer currently referenced by `value`. This is the last evaluated expression in the block and so forms the return value, but `each` ignores this.
+
+Back in the outer block, on line 6 is the expression `incremented_hash`. This is the last evaluated expression in the `map` block, and so forms the block return value. `map` uses this for purposes of transformation, returning a new array object of hashes, each of which has identical Symbol keys to the hashes in the calling array but each associated Integer value has been incremented by `1`.
+
+Thus when `new_hash` is passed to `Kernel#p` on line 9, the output to the screen will be `[{a: 2}, {b: 3, c: 4}, {d: 5, e: 6, f: 7}]`.
+
+This example demonstrates using nested iterators to perform transformation on the innermost elements of a nested data structure.
+
+--11:23
 
 
 
@@ -1555,7 +1614,19 @@ end
 p new_arr
 ```
 
+On line 1, local variable `arr` is initialized to the array  `[[2], [3, 5, 7, 12], [9], [11, 13, 15]]`. Next, on line 3, local variable `new_arr` is initialized to the return value of calling `Array#map` on `arr` with a `do...end` block.
 
+The `Array#map` method iterates through the calling collection passing each nested array element to the block in turn to be assigned to the block parameter `element`. `map` uses the block return value for purposes of transformation, returning a new array object whose elements are the objects returned by the block iterations.
+
+Within the block, on line 3, the `Array#select` method is called on the inner array currently referenced by `element` with a `do...end` block. `select` iterates through the caller passing each element in turn to the block to be assigned to the block parameter `num`. `select` uses the return value of the block for purposes of selection, returning a new array whose elements are only those elements from the caller whose block returned a truthy value.
+
+Within this second-level block, the `Integer#%` method is called on `num` with `3` passed as argument. The return value from this operation is then tested for equality with `0`. This essentially checks whether `num` is divisible cleanly by `3` with no remainder. If so, the `Integer#==` method returns `true`, `false` otherwise. This is the last evaluated expression in the block and so forms the block return value which `select` uses as the selection criterion for each element from the caller.
+
+The new, selected array returned by `select` is the last evaluated expression in the outer block, and so forms the block return value which `map` uses for purposes of transformation. Therefore, this invocation of `map` returns a new array object whose nested sub-arrays contain only those integers from the sub-arrays in the caller that are divisible by `3`. When this is passed to `Kernel#p` on line 9, the output to screen will be: `[[], [3, 12], [9], [15]]`.
+
+This example demonstrates using nested iterators to perform selection on the innermost elements in a nested data structure.
+
+--9:55
 
 ### 11b ###
 
@@ -1571,7 +1642,23 @@ end
 p new_arr
 ```
 
+On line 1, local variable `arr` is initialized to the array `[[2], [3, 5, 7, 12], [9], [11, 13, 15]]`. Next, on line 3, local variable `new_arr` is initialized to the return value of calling `Array#map` on `arr` with a `do...end` block.
 
+The `map` method iterates through the calling collection passing each nested array element in turn to the block to be assigned to the block parameter `element`. `map` uses the return value of the block for purposes of transformation, returning a new array whose elements are the return values of the block iterations.
+
+Within the block, on line 4, the `Array#reject` method is called on the array currently referenced by `element` with a `do...end` block. `reject` iterates through the caller passing each integer element in turn to the block to be assigned to the block parameter `num`. `reject` uses the return value from the block for purposes of selection, returning a new array whose elements are those elements from the caller whose block iteration returned a falsey value.
+
+Within this inner block, on line 5, is the expression `num % 3 != 0`. This functions as a divisibility test but with a reversed logic that mirrors the reversed selection logic of `reject`. If the return value of calling the modulo operator method on `num` with `3` passed as argument is `0`, then the `Integer#!=` expression returns `false`, `true` otherwise. Therefore, integers that are divisible by `3` return `false` and those that are not return `true`. This is the last evaluated expression in the block and so forms the return value.
+
+`reject` will therefore return a new array whose integer elements are those whose block iteration returned a falsey value, which will be those integers that are cleanly divisible by `3` with no remainder. The `reject` call is the last evaluated expression in the `map` block and so forms the return value, which `map` uses for purposes of transformation.
+
+Therefore `map` will return a new array containing new nested sub-arrays containing only those integer elements from the caller's sub-arrays that are divisible by `3`.
+
+Thus, when `new_arr` is passed to `Kernel#puts` on line 9, the output will be `[[], [3, 12], [9], [15]]`.
+
+This example demonstrates using nested iterators to perform selection on the innermost elements of a nested data structure.
+
+--12:52 
 
 
 
@@ -1588,7 +1675,19 @@ end
 p hsh
 ```
 
+On line 1, local variable `arr` is initialized to the array `[[:a, 1], ['b', 'two'], ['sea', {c: 3}], [{a: 1, b: 2, c: 3, d: 4}, 'D']]`. Next, on line 3, local variable `hsh` is initialized to an empty hash.
 
+On line 4, the `Array#each` method is invoked on `arr` with a `do...end` block. `each` performs iteration, passing each element to the block in turn to be assigned to the parameter `item`. `each` executes the block once for each element and ignores the return value, returning a reference to the caller.
+
+Within the block, on line 5, hash element assignment method `Hash#[]=` is invoked on `hsh` to initialize a key-value pair. The key object given is the return value of calling the array element reference method `Array#[]` on the array currently referenced by `item` with `0` passed as argument. This returns the object at index `0`. The same method is used to determine the value part of the new key-value pair with `1` passed as argument, returning the element at index `1`.
+
+Therefore, this `each` invocation iterates through the caller and for each array element, creates a new key-value pair in `hsh` where the key is the first element from the nested sub-array and the value is the second.
+
+Thus, when `hsh` is passed as argument to the `Kernel#p` method on line 8, the output will be `{:a=>1, "b"=>"two", "sea"=>{:c=>3}, {:a=>1, :b=>2, :c=>3, :d=>4}=>"D"}`.
+
+This example demonstrates using the iterative `each` method to construct a new hash from the elements of an array of arrays.
+
+--8:19 
 
 
 
@@ -1606,7 +1705,25 @@ end
 p new_arr
 ```
 
+On line 1, local variable `arr` is initialized to the array `[[1, 6, 9], [6, 1, 7], [1, 8, 3], [1, 5, 9]]`. Next, local variable `new_arr` is initialized to the return value of calling `Enumerable#sort_by` on `arr` with a `do...end` block.
 
+The `sort_by` method returns a new array with the elements of the caller sorted according to the criterion given by the block. `sort_by` iterates through the calling collection passing each nested array element in turn to the block to be assigned to the block parameter `sub_arr`. `sort_by` uses the return value from the block as a sort key. When making comparisons to determine the sort order of the elements from the caller in the new array it will return, `sort_by` makes comparisons between the associated sort keys of the elements with rather than between the elements themselves.
+
+Within the `sort_by` block, the `Array#select` method is called on the array currently referenced by `sub_arr` with a `do...end` block. The `select` method iterates through the calling collection passing each integer element in turn to the block to be assigned to the block parameter `num`. `select` uses the return value from the block for purposes of selection, returning a new array with only those elements from the caller whose block returned a truthy value.
+
+Within the `select` block, the `Integer#odd?` method is called on `num`. This returns `true` if the calling integer is odd, `false` otherwise. This is the last evaluated expression in the block and so determines the return value of the block.
+
+`select` therefore returns a new array with only the odd integers from the caller. This is the last evaluated expression in the `sort_by` block and so forms the block return value that `sort_by` uses as the sort key for the element that was assigned to the block parameter.
+
+`sort_by` therefore makes comparisons between new arrays with only the odd numbers from the associated array elements from the caller. In order to perform these comparisons `sort_by` uses the `Array#<=>` method.
+
+The `Array#<=>` method makes element-wise comparison between the calling array and the argument based on the `<=>` method of the elements in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, `1` if the caller is greater. Since the elements of the sub-arrays are integers, the `Integer#<=>` method is used for the element comparisons. The `Integer#<=>` method makes comparison between the calling integer and argument based on numeric value, and uses the same return values to signal the same relations between caller and argument as the `Array#<=>` method.
+
+When `new_arr` is passed to `Kernel#p` on line 9, the new array that will be output to screen will therefore be sorted as though the even integer elements were not present: `[[1, 8, 3], [1, 5, 9], [6, 1, 7], [1, 6, 9]]`.
+
+This example demonstrates using nested iterators with blocks in order to provide a sort criterion for a nested data structure.
+
+--17:32
 
 
 
@@ -1634,6 +1751,38 @@ end
 p new_hsh
 ```
 
+On line 1, local variable `hsh` is initialized to the hash 
+
+```{  'grape' => {type: 'fruit', colors: ['red', 'green'], size: 'small'},
+ {
+  'grape' => {type: 'fruit', colors: ['red', 'green'], size: 'small'},
+  'carrot' => {type: 'vegetable', colors: ['orange'], size: 'medium'},
+  'apple' => {type: 'fruit', colors: ['red', 'green'], size: 'medium'},
+  'apricot' => {type: 'fruit', colors: ['orange'], size: 'medium'},
+  'marrow' => {type: 'vegetable', colors: ['green'], size: 'large'},
+}
+```
+
+Next, `new_hsh` is initialized to the return value of calling `Enumerable#map` on `hsh` with a `do...end` block. `map` iterates through the calling collection passing each key-value pair in turn to the block to be assigned to the parameters. The key object is assigned to parameter `_`, which conventionally signifies that that parameter will not be used. The value object is assigned to `value`. `map` uses the return value of the block for purposes of transformation, returning a new array whose elements are the objects returned by the block iterations.
+
+Within the block, on line 10, an `if` condition uses a call to `Hash#[]` to check whether the value object in the hash currently referenced by `value` associated with the key `:type` is equal to `'fruit'`. If so, this branch is followed and the code on lines 11-13 is executed.
+
+On line 11, the `Hash#[]` element reference method is called again, returning the array object associated with the key `:colors`. Chained on this return value is a call to `Array#map` with a `do...end` block with the parameter `color`.
+
+Within this second-level `map` block, on line 12, the only expression is an invocation of `String#capitalize` on the string currently referenced by `color`. This returns a new string object with the first character, if it is a letter, in uppercase, any remaining letters in lowercase. This is the last evaluated expression and so forms the return value. The second-level `map` call thus returns a new array whose elements are new strings that are capitalized versions of the caller's string elements. When the `if` branch is followed on line 10, this will form the return value of the outer `map` block.
+
+If the return value of `value[:type]` is not equal to `'fruit'` but is equal to `vegetable`, then the `elsif` branch is followed and line 15 is executed. Here, element reference is used to return the string value object associated with the key `:size`. Chained on this is a call to `String#upcase`, which returns a new string with all letters from the caller in uppercase. This will be the return value of the outer `map` block if the `elsif` branch is followed.
+
+If neither the `if` condition on line 10 nor the `elsif` condition on line 14 evaluates as true, then the block returns `nil`.
+
+The outer call to `map` therefore receives from the block either a new array object whose elements are new capitalized strings if the hash element for that block iteration describes a `"fruit"`, or a new uppercase string if that hash element describes a `"vegetable"`.
+
+Therefore, when `new_hash` is passed to `Kernel#p` on line 19, the output will be: `[["Red", "Green"], "MEDIUM", ["Red", "Green"], ["Orange"], "LARGE"]`.
+
+This example demonstrates using nested iterators with blocks with conditional logic in order to transform the elements of a nested data structure.
+
+--20:22
+
 
 
 ### 15 ###
@@ -1652,7 +1801,27 @@ end
 p new_arr
 ```
 
+On line 1, local variable `arr` is initialized to the array of hashes `[{a: [1, 2, 3]}, {b: [2, 4, 6], c: [3, 6], d: [4]}, {e: [8], f: [6, 10]}]`.
 
+Next, on line 3, local variable `new_arr` is initialized to the return value of calling `Array#select` on `arr` with a `do...end` block. The `select` method iterates through the caller passing each hash element in turn to the block to be assigned to parameter `hsh`. `select` uses the return value from the block for purposes of selection, returning a new array whose elements are only those elements from the caller whose block iteration returned a truthy value.
+
+Within the `select` block, the `Enumerable#all?` method is invoked on `hsh` with a `do...end` block. `all?` iterates through the calling hash passing each key-value pair in turn to the block. The key object is assigned to the `_` parameter which conventionally signifies that this parameter will not be used. The value object is assigned to parameter `value`. `all?` considers the truthiness of the block return value, and returns `true` if every block iteration returns a truthy value, `false` otherwise.
+
+Within this `all?` block, on line 5, there is an invocation of `Array#all?` with a `do...end` block with one parameter `num`.
+
+Within this inner `all?` block, the `Integer#even?` method is called on `num`, returning `true` if the integer caller is even, `false` otherwise. This is the last evaluated expression in the inner `all?` block and so forms the return value.
+
+Therefore, the inner call to `all?` returns `true` if every integer in the calling array is even, `false` otherwise. This is the last evaluated expression in the outer `all?` block and so forms the return value.
+
+The outer call to `all?` returns `true` if every array value object contains only even integers, `false` otherwise. This is the last evaluated expression in the `select` block and so forms the return value.
+
+Therefore, these nested iterators with block return a new selected array containing only the hashes from the caller whose every array value object contains only even numbers.
+
+Thus when `new_arr` is passed to `Kernel#puts` on line 11, the output will be `[{:e=>[8], :f=>[6, 10]}]`.
+
+This example demonstrates using nested iterators with blocks to perform selection on the elements of a nested data structure.
+
+--13:45
 
 ### 16 ###
 
@@ -1675,5 +1844,26 @@ end
 new_uuid = generate_UUID
 ```
 
+On line 16, the first line after the method definition, local variable `new_uuid` is initialized to the return value of calling `generate_UUID`.
 
+The `generate_UUID` method is defined over lines 1-14 with the `def` keyword and takes no parameters.
 
+Within the body of the definition, on line 2, local variable `characters` is initialized to an empty array. Next, on line 3, the `Range#each` method is called on the inclusive range literal `(0..9)` with a `{...}` block. The `Range#each` method performs iteration, here through a range of integers; each integer in the range is returned by successive calls to `Integer#succ`; `Integer#succ` returns the integer `1` greater than the caller; the first caller for `succ` is the first element in the range, the second is the return value from the previous call to `succ`, and so on. Each integer in the range is passed to the block to be assigned to block parameter `digit`. `each` ignores the return value of the block, and returns a reference to the calling Range object.
+
+Within the block, the `Integer#to_s` method is called on the integer currently referenced by `digit`; this returns a new string representation of the caller. The `Array#<<` method then destructively appends this return value to the `characters` array. Thus after `each` returns, `characters` will contain string representations of the digits `"0"` through `"9"` inclusive.
+
+Next, the `Range#each` method is called again, on range literal `('a'..'f')` with a `{...}` block. Each string in the range is yielded by successive calls to `String#succ`. Since the first and last strings in the range are lowercase letters and the last character is greater in ASCII value than the first, successive calls to `succ` will yield each lowercase letter as a String object from `'a'` through `'f'` inclusive. Each string is passed to the block to be assigned to the parameter `digit'`. Within the block, the `Array#<<` method is again called on `characters` with `digit` passed as argument. Therefore, after this `each` call returns, `characters` will now also contain string representations of the letters `"a"` through `"f"` inclusive. `characters` now contains every digit in the hexadecimal number system as a String object.
+
+On line 6, local variable `uuid` is initialized to an empty string. Next on line 7, local variable `sections` is initialized to the array `[8, 4, 4, 4, 12]`.
+
+Next, on line 8, The `Array#each_with_index` method is called on `sections`. `each_with_index` performs iteration, calling the block once for each element, which is assigned to block parameter `section`, and also passing the index of each element to the block to be assigned to parameter `index`. `each_with_index` ignores the return value from the block and returns a reference to the caller.
+
+Within the block, on line 9, the `Integer#times` method is called on `section` with a `{...}` block. The `times` method performs iteration, executing the block once for each integer from `0` up to but not including the calling integer. Within the block, the `Array#sample` method is called on `characters` to return a pseudorandom element from the caller. Then syntactic sugar `+=` is used to return a new string with the string returned by  `sample` appended to the previous value of `uuid`, which is then reassigned to `uuid`. After this call to `each`, `uuid` contains the number of random strings from `characters` determined by the integer currently referenced by `section`.
+
+On line 10, an `unless` modifier checks whether the integer currently referenced by `index` is greater than or equal to the integer `1` less than the size of the `sections` array; if so, the preceding code is not executed. If the index of this iteration is less than the last index, the preceding code is executed and `+=` syntactic sugar is again used, this time to return a new string with the string `'='` appended to the previous value of `uuid` before reassigning this new string back to `uuid`.
+
+After this `each_with_index` invocation returns, the expression `uuid` on line 13 forms the implicit return value of the method.
+
+Therefore, at the end of the method invocation, the string return value assigned to variable `new_uuid` is 8 random hexadecimal digits followed by a `-`, then 4 digits and another dash, then another 4 digits and another dash then another 4 digits and another dash, and then 12 final digits.
+
+--33:12
