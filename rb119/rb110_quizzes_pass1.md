@@ -1,0 +1,856 @@
+# RB110 Quizzes #
+
+## Lesson 1 ##
+
+### 1 ###
+
+```ruby
+numbers = ['2', '3', '5', '7', '8', '11', '13', '15', '18']
+odd_numbers = []
+
+for number in numbers
+  if number.to_i.odd?
+    odd_numbers.push(number)
+  end
+end
+
+p odd_numbers
+```
+
+On line 1, local variable `numbers` is initialized to the array `['2', '3', '5', '7', '8', '11', '13', '15', '18']`. Next, local variable `odd_numbers` is initialized to an empty array.
+
+On line 4, a `for` loop begins, initializing local variable `number` and iterating through the `numbers` array, assigning each element in turn to `number`. Within the loop, on line 5, the `String#to_i` method is called on `number`, returning an Integer object representation of the decimal string. Chained on this return value is a call to `Integer#odd?`, which returns Boolean `true` if the integer is odd, `false` otherwise. This return value forms the condition of an `if` expression. If the return value from `odd?` is `true`, line 6 is executed.
+
+On line 6, the `Array#push` method is called on `odd_numbers` with `number` passed as argument. This destructively appends the decimal string referenced by `number` to the `odd_numbers` array.
+
+After the `for` loop has ceased iteration, the `odd_numbers` array will contain all the string representations of odd numbers from the `numbers` array. So when, on line 10, `odd_numbers` is passed as argument to the `Kernel#p` method, the output to screen will be `['3', '5', '7', '11', '13', '15']`
+
+This example demonstrates using a `for` loop to perform a selection operation on an array.
+
+--9:13
+
+### 2 ###
+
+```ruby
+numbers = ['2', '3', '5', '7', '8', '11', '13', '15', '18']
+odd_numbers = []
+counter = 0
+
+loop do
+  number = numbers[counter].to_i
+
+  odd_numbers << numbers[counter] unless number.even?
+
+  counter += 1
+  break if counter == numbers.size
+end
+
+p odd_numbers
+```
+
+On line 1, local variable `numbers` is initialized to the array `['2', '3', '5', '7', '8', '11', '13', '15', '18']`. Next, local variable `odd_numbers` is initialized to an empty array.  Local variable `counter` is initialized to `0`.
+
+On line 5, the `Kernel#loop` method is called with a `do...end` block. The `loop` method performs iteration, executing the block repeatedly until a control expression breaks out of the loop.
+
+Within the block, on line 6, local variable `number` is initialized to the return value of a chain of method calls. First, the `Array#[]` element reference method is called on `numbers` with `counter` passed as argument; this returns the element in the `numbers` array at index `counter`. Chained on this return value is a call to `String#to_i` which returns an Integer object representation of the digit String. This Integer object is assigned to `number`.
+
+Next, on line 8, an `unless` modifier uses for its condition the return value of calling `Integer#even?` on `number`. If the integer currently referenced by `number` is even, the return value will be `true` and the `unless` modifier does not execute the preceding code on the line. If `number` is odd, the return value will be `false` and the preceding code on line 8 executes. The `Array#[]` method is called on numbers with `counter` passed as argument and the returned String object is destructively appended to the `odd_numbers` array by the `Array#<<` method.
+
+On line 9, the `counter` variable is incremented with `+=` syntactic sugar. Then, on line 11, a `break` condition checks whether `counter` is equal to the return value of calling `Array#size` on `numbers`, breaking from the loop if so.
+
+This `loop` invocation therefore appends every String representation of an odd number from the `numbers` array to the `odd_numbers` array. When `odd_numbers` is passed to the `Kernel#p` method on line 14, the output to the screen will be `['3', '5', '7','11', '13', '15']`
+
+This example demonstrates using a simple `loop`, counter, conditional selection criterion and break condition to perform selection on an array.
+
+--12:48
+
+### 3 ###
+
+```ruby
+numbers = ['2', '3', '5', '7', '8', '11', '13', '15', '18']
+odd_numbers = []
+
+numbers.each do |number|
+  odd_numbers << number if number.to_i.odd?
+end
+
+p odd_numbers
+```
+
+On line 1, local variable `numbers` is initialized to the array `['2', '3', '5', '7', '8', '11', '13', '15', '18']`. Next, local variable `odd_numbers` is initialized to an empty array.
+
+On line 4, the `Array#each` method is called on `numbers` with ` do...end` block. `each` performs iteration, passing each element in turn to the block to be assigned to the block parameter `number` and executing the block. `each` ignores the block return value and returns a reference to the caller.
+
+Within the block, on line 5, the `String#to_i` method is called on `number`, returning an Integer representation of the digit String. Chained on this integer return value is a call to `Integer#odd?`, which returns `true` if the caller is odd, `false` otherwise. This Boolean return value forms the condition of an `if ` modifier. If `odd?` returns `true`, the preceding code on the line is executed. This consists of an invocation of `Array#<<` on `odd_numbers` with `number` passed as argument. So if the `if` modifiers condition evaluates as true, the string referenced by `number` is destructively appended to the `odd_numbers` array.
+
+After `each` returns, therefore, the `odd_numbers` array will contain the string representations of only the odd numbers in the numbers array. So when `odd_numbers` is passed to the `Kernel#p` method on line 8, the output will be `['3', '5', '7','11', '13', '15']`
+
+This example demonstrates the use of the `each` iterator method to perform a selection operation on an array.
+
+--7:28
+
+### 4 ###
+
+```ruby
+hsh = {a: 'apple', b: 'pear', c: 'orange', d: 'kiwi', e: 'banana'}
+counter = 0
+
+new_hsh = {}
+
+for letter, fruit in hsh
+  new_hsh[letter] = fruit if fruit.size > 4
+end
+
+p new_hsh
+```
+
+On line 1, local variable `hsh` is initialized to the hash `{a: 'apple', b: 'pear', c: 'orange', d: 'kiwi', e: 'banana'}`. Next, local variable `counter` is initialized to `0`. Then local variable `new_hsh` is initialized to an empty hash.
+
+On line 6, a `for` loop begins iterating through the key-value pairs in `hsh`, assigning each key object in turn to local variable `letter` and each value object to local variable `fruit`.
+
+Within the loop, on line 7, the `String#size` method is called on `fruit` and a comparison method `Integer#>` is called on this return value with `4` passed as argument. This expression returns `true` if the number of characters in `fruit` is greater than `4`, `false` otherwise. This Boolean return value is used as the condition for an `if` modifier. If the comparison returns `true`, the code preceding the modifier is executed. This is a call to the hash element assignment method `Hash#[]=` with `letter` and `fruit` passed as arguments, mutating the `new_hsh` hash by initializing a new key-value pair with `letter` as the key and `fruit` as the value.
+
+After this `for` loop executes, the `new_hsh` hash will contain each key-value pair from `hsh` where the value part, a string, contains more than four characters.
+
+Thus when `new_hsh` is passed to the `Kernel#p` method on line 10, the output will be `{:a=>"apple", :c=>"orange", :e=>"banana"}`.
+
+This example demonstrates using a `for` loop to perform selection on a hash.
+
+--10:05
+
+
+
+### 5 ###
+
+```ruby
+def some_method(words)
+  arr = []
+  counter = 0
+
+  loop do
+    word = words[counter]
+    arr << word if word.size < 4
+
+    counter += 1
+    break if counter == words.size
+  end
+
+  arr
+end
+
+poem = %w(April is the cruelest month)
+p some_method(poem)
+```
+
+On line 16, the first line after the method definition, local variable `poem` is initialized to the array of strings `%w(April is the cruelest month)`.
+
+Next, the `some_method` method is called with `poem` passed as argument.
+
+The `some_method` method is defined over lines 1-14 with the `def` keyword and one parameter `words` which on this invocation is assigned to the same Array object referenced by `poem`.
+
+Within the method definition body, on line 2, local variable `arr` is initialized to an empty array. Next, local variable `counter` is initialized to the integer `0`.
+
+On line 5, the `Kernel#loop` method is called with a `do...end` block. `loop` performs iteration, executing the block repeatedly until a control expression in the block breaks out of the loop.
+
+Within the block, on line 6, local variable `word` is initialized to the return value of calling element reference method `Array#[]` on `words` with `counter` passed as argument, which returns the string element at index `counter`.
+
+Next, on line 7, an `if` modifier checks whether the integer return value of calling the `String#size` method on `word` is less than `4`. If so, the code preceding the modifier is executed. Here, the `Array#<<` method is called on `arr` with `word` passed as argument, which destructively appends the string referenced by `word` to the `arr` array.
+
+On line 9, `counter` is incremented with `+=` syntactic sugar. Then, on line 10, a `break` condition checks whether `counter` is equal to the return value of calling `Array#size` on `words`, breaking from the loop if so.
+
+After the loop has finished executing, `arr` will therefore contain each string from the `words` array that has less than `4` characters. On line 13, `arr` is expressed as the implicit return value of `some_method`.
+
+So on line 17, the array that is returned by `some_method` and passed as argument to the `Kernel#puts` method to be output to screen is `["is", "the"]`
+
+This example demonstrates a method that uses a simple `loop`, counter, conditional selection criterion, and break condition to perform selection on an array.
+
+--11:32
+
+### 6 ###
+
+```ruby
+def star_method(stars)
+  arr = []
+  stars.each do |star|
+    arr.push(star.upcase)
+  end
+  arr
+end
+
+stars_1 = ['Sirius', 'Rigel', 'Vega', 'Polaris', 'Altair']
+p star_method(stars_1)
+```
+
+On line 9, the first line after the method definition, local variable `stars_1` is initialized to the array `['Sirius', 'Rigel', 'Vega', 'Polaris', 'Altair']`. Next, the `star_method` is invoked with `stars_1` passed as argument.
+
+The `star_method` method is defined over lines 1-7 with the `def` keywords and one parameter, `stars`, which on this invocation is assigned to the same array referenced by `stars_1`.
+
+Within the body of the definition, local variable `arr` is initialized to an empty array. On line 3, the `Array#each` method is invoked on `stars` with a `do...end` block. The `each` method performs iteration, passing each element in turn to the block parameter `star` and executing the block. `each` ignores the return value of the block and returns a reference to the caller.
+
+Within the block, on line 4, the `Array#push` method is called on `arr`; the argument is the return value of calling `String#upcase` on the string currently referenced by `star`, which returns a new string with all letters from the caller in uppercase. The `push` method destructively appends this new string to the `arr` array.
+
+This `each` invocation therefore appends to `arr` uppercase versions of all the string elements from the `stars` array.
+
+Finally, on line 6, `arr` is expressed as the implicit return value of the `star_method` method.
+
+Therefore, on line 10, when the return value of `star_method` is passed to `Kernel#p` as argument, the output to the screen will be `["SIRIUS", "RIGEL", "VEGA", "POLARIS", "ALTAIR"]`.
+
+This example demonstrates using the iterative method `each` with a block, with a variable initialized to a matching empty collection outside of the block in order to remain in scope once the `each` method returns, to perform a transformation operation on an array.
+
+--10:00
+
+
+
+### 7 ###
+
+```ruby
+def star_method(stars)
+  arr = []
+  counter = 0
+
+  until counter == stars.size do
+    arr << stars[counter][0, 3]
+
+    counter += 1
+  end
+  arr
+end
+
+stars_1 = ['Sirius', 'Rigel', 'Vega', 'Polaris', 'Altair']
+p star_method(stars_1)
+```
+
+On line 13, the first line after the method definition, local variable `stars_1` is initialized to the array `['Sirius', 'Rigel', 'Vega', 'Polaris', 'Altair']`. Next, on line 14, the return value of calling the `star_method` with `stars_1` passed as argument is passed to the `Kernel#p` method.
+
+The `star_method` is defined over lines 1-11 with the `def` keyword and has one parameter, `stars` which on this invocation is assigned to the same array referenced by `stars_1`.
+
+Within the body of the definition, on line 2, local variable `arr` is initialized to an empty array. Next, local variable `counter` is initialized to the integer `0`.
+
+On line 5, an `until` loop iterates until `counter` is equal to the size of the `stars` array. Within the loop, on line 6, the `Array#[]` element reference method is invoked on `stars` with `counter` passed as argument, returning the string element at index `counter`. Chained on this return value is a call to the `String[]` method with two arguments, `0` and `3`. This returns a new string containing `3` characters from the string starting at index `0`. This return value is passed as argument to an invocation of `Array#<<` on `arr`, destructively appending the string to the `arr` array.
+
+On line 8, `counter` is incremented by `1` using `+=` syntactic sugar. After the loop, on line 10, `arr` is expressed as the implicit return value of `star_method`.
+
+Therefore, the new array object passed to `p` on line 14 and output to screen will be: `["Sir", "Rig", "Veg", "Pol", "Alt"]`
+
+This example demonstrates using a simple loop, counter and transformation criterion to perform a transformation operation on an array.
+
+--10:37
+
+### 8 ###
+
+```ruby
+numbers = [1, 2, 4, 5, 7, 8, 10, 13, 14]
+
+odd_numbers = numbers.select do |number|
+                number.odd?
+              end
+
+even_numbers = numbers.select do |number|
+                number.even?
+              end
+```
+
+On line 1, local variable `numbers` is initialized to the array `[1, 2, 4, 5, 7, 8, 10, 13, 14]`.
+
+Next, on line 3, local variable `odd_numbers` is initialized to the return value of calling `select` on `numbers` with a `do...end` block. The `select` method iterates through the calling collection passing each element in turn to the block to be assigned to the block parameter `number`. `select` considers the truthiness of the return value from the block for purposes of selection, returning a new array whose elements are only those elements from the caller whose block returned a truthy value.
+
+Within the block, the `Integer#odd?` method is called on the integer currently referenced by `number`. This returns `true` if the integer is odd, `false` otherwise. This is the last evaluated expression in the block and so forms the return value. Therefore this `select` call returns a new array whose elements are `[1, 5, 7, 13]`, which is assigned to `odd_numbers`.
+
+Next, on line 7, local variable `even_numbers` is initialized to the return value of calling `select` on `numbers` again with a block whose parameter is `number`.  Within this block, on line 8, the selection criterion is a call to `Integer#even?` on `number`, which returns `true` if the calling integer is even, `false` otherwise. This forms the return value from the block.
+
+The second `select` call therefore returns a new array with only the even numbers from `numbers` which is assigned to `even_numbers`: `[2, 4, 8, 10, 14]`.
+
+This example demonstrates how the `select` method with a block performs selection on a collection.
+
+--7:01
+
+
+
+### 9 ###
+
+```ruby
+numbers = [1, 2, 4, 5, 7, 8, 10, 13, 14]
+odd_numbers = []
+even_numbers = []
+
+numbers.each do |number|
+  if number.even?
+    even_numbers << number
+  elsif number.odd?
+    odd_numbers << number
+  end
+end
+```
+
+On line 1, local variable `numbers` is initialized to the array ` [1, 2, 4, 5, 7, 8, 10, 13, 14]`. Next, local variable `odd_numbers` is initialized to an empty array, and local variable `even_numbers` is also initialized to an empty array.
+
+On line 5, the `Array#each` method is called on `numbers` with a `do...end` block. `each` performs iteration, passing each element in turn to the block to be assigned to parameter `number`. `each` ignores the return value from the block and returns a reference to the caller.
+
+Within the block, an `if...else` expression extends over lines 6-10. The `if` branch condition evaluates the return value of calling `Integer#even?` on `number`. If the integer is even, `even?` returns `true` and the branch code on line 7 is executed. On line 7, the `Array#<<` method is called on `even_numbers` with `number` passed as argument, destructively appending `number` to the array.
+
+If the `if` condition evaluated to false, the `elsif` condition on line 8 is checked, which evaluates the return value from calling `Integer#odd?` on `number`. If the integer is odd, `odd?` returns `true` and the code on line 9 is executed. Here, the `Array#<<` method is called on `odd_numbers` with `number` passed as argument.
+
+Therefore, after this `each` invocation finishes iteration, `even_numbers` will contain: `[2, 4, 8, 10, 14]`; `odd_numbers` will contain `[1, 5, 7, 13]`.
+
+This example demonstrates using the basic iteration method `each` to perform a partition operation on an array.
+
+--8:19
+
+### 10 ###
+
+```ruby
+numbers = [1, 2, 4, 5, 7, 8, 10, 13, 14]
+odd_numbers = []
+even_numbers = []
+
+for number in numbers
+  next if number.odd?
+  even_numbers << number
+end
+
+for number in numbers
+  next unless number.odd?
+  odd_numbers << number
+end
+```
+
+On line 1, local variable `numbers` is initialized to the array `[1, 2, 4, 5, 7, 8, 10, 13, 14]`. Next, local variable `odd_numbers` is initialized to a new empty array, and local variable `even_numbers`  is initialized to a new empty array.
+
+A `for` loop extends over lines 5-8. The loop initializes local variable `number`, assigning it each element in turn from the `numbers` array over successive iterations.
+
+Within the loop, on line `6`, an `if` condition evaluates the return value of calling `Integer#odd?` on `number`, which returns `true` if the integer caller is odd, `false` otherwise. If `odd?` returns `true`, the `next` keyword is executed, skipping to the next iteration of the loop without executing any more code on this iteration.
+
+If `odd?` returns `false`, this iteration continues on line 7, where the `Array#<<` method is called on `even_numbers` with `number` passed as argument. This destructively appends `number` to the `even_numbers` array.
+
+Thus, after this `for` loop finishes iteration, the `even_numbers` array will contain all even integers from `numbers`.
+
+On lines 10-13, is a very similar `for` loop. The differences are on lines 11 and 12. On line 11, the `if` modifier is replaced by an `unless` modifier, reversing the logic. This loop will skip those numbers whose `odd?` invocation returns `false`. On line 12, the integer referenced by `number`, which the preceding line has determined to be odd, is destructively appended to the `odd_numbers` array.
+
+Therefore after this second `for` loop, the `odd_numbers` array contains all odd integers from the `numbers` array. So at the end of  this code, `odd_numbers` contains `[1, 5, 7, 13]`, while `even_numbers` contains `[2, 4, 8, 10, 14]`
+
+This example demonstrates using two `for` loops to perform a partition operation on an array.
+
+--10:59
+
+### 11 ###
+
+```ruby
+countries_and_capitals = {
+  'France' => 'Paris',
+  'Belgium' => 'Brussels',
+  'Morocco' => 'Rabat',
+  'Barbados' => 'Bridgetown',
+  'Peru' => 'Lima',
+  'Bolivia' => 'La Paz',
+  'Brazil' => 'Brasilia'
+}
+
+countries_and_capitals.each_with_object({}) do |(k, v), obj|
+  obj[k] = v if k.chr == 'B'
+end
+```
+
+On line 1, local variable `countries_and_capitals` is initialized to the hash:
+
+```ruby
+{
+  'France' => 'Paris',
+  'Belgium' => 'Brussels',
+  'Morocco' => 'Rabat',
+  'Barbados' => 'Bridgetown',
+  'Peru' => 'Lima',
+  'Bolivia' => 'La Paz',
+  'Brazil' => 'Brasilia'
+}
+```
+
+Next, the `Enumerable#each_with_object` method is called on `countries_and_capitals` with an empty Hash object passed as argument, with a `do...end` block. The `each_with_object` method iterates through the calling collection passing each key-value pair to the block to be assigned to parameters `k`, for the key object, and `v` for the value object. On each iteration the Hash object passed as argument is also passed into the block and assigned to block parameter `obj`. The `each_with_object` method ignores the return value from the block and returns the Hash object passed as argument.
+
+Within the block, an `if` modifier checks whether the return value of calling `String#chr` on `k`, which returns the first character from the string as a new string, is equal to `'B'`. If so, the code preceding the modifier is executed. Here, a new key-value pair is initialized in the `obj` hash using the `Hash#[]=` method, with `k` passed as the key argument and `v` as the value argument.
+
+This means that this invocation of `each_with_object` will selectively copy key-value pairs from `countries_and_capitals` to the `obj` hash that is to be returned by the method only if the string used as key starts with the letter `'B'`.
+
+Therefore, once the `each_with_object` method returns the hash object passed as argument it now contains the key-value pairs: `{"Belgium"=>"Brussels", "Barbados"=>"Bridgetown", "Bolivia"=>"La Paz", "Brazil"=>"Brasilia"}`.
+
+This example demonstrates performing a selection operation on a hash using the `each_with_object` method.
+
+--9:27
+
+### 12 ###
+
+```ruby
+countries_and_capitals = {
+  'France' => 'Paris',
+  'Belgium' => 'Brussels',
+  'Morocco' => 'Rabat',
+  'Barbados' => 'Bridgetown',
+  'Peru' => 'Lima',
+  'Bolivia' => 'La Paz',
+  'Brazil' => 'Brasilia'
+}
+
+def select_countries(hsh)
+  sub_set = {}
+  hsh.each_key do |country|
+    if country[0] == 'B'
+      sub_set[country] = hsh[country]
+    end
+  end
+  sub_set
+end
+
+select_countries(countries_and_capitals)
+```
+
+On line 1, local variable `countries_and_capitals` is initialized to the hash:
+
+```ruby
+{
+  'France' => 'Paris',
+  'Belgium' => 'Brussels',
+  'Morocco' => 'Rabat',
+  'Barbados' => 'Bridgetown',
+  'Peru' => 'Lima',
+  'Bolivia' => 'La Paz',
+  'Brazil' => 'Brasilia'
+}
+```
+
+On lines 11-19 the `select_countries` method is defined with the `def` keyword to have one parameter `hsh`.
+
+On line 21, the `select_countries` method is called with `countries_and_capitals` passed as argument. Thus on this invocation, parameter `hsh` is assigned to the same hash referenced by `countries_and_capitals`.
+
+Within the body of the method definition, on  line 12, the local variable `sub_set` is initialized to an empty hash. On the next line, the `Hash#each_key` method is invoked on `hsh` with a `do...end` block. The `each_key` method iterates through the calling hash passing each key object from the hash to the block to be assigned to parameter `country`. `each_key` ignores the return value from the block and returns a reference to the caller.
+
+Within the block, on line 14, an `if` condition checks whether the first character from the string referenced by `country` is equal to the string `'B'`. If so, line 15 is executed. Here, a new key-value pair is initialized in the `sub_set` hash by calling the `Hash#[]=` element assignment method with `country` passed as key argument; the value argument is  the return value of calling the `Hash#[]` element reference method on `hsh` with `country` passed as argument, which returns the value object in `hsh` that is associated with the key referenced by `country`. This operation copies a key-value pair from `hsh` into `sub_set`, if the `if` condition on line 14 evaluates as true.
+
+Therefore at the end of this `each_key` invocation, the `sub_set` hash contains all key-value pairs from the `hsh` hash where the first character of the string key is `'B'`.
+
+On line 18, `sub_set` is expressed as the implicit return value of the `select_countries` method. Therefore when this hash is returned to line 21, its state will be `{'Belgium' => 'Brussels', 'Barbados' => 'Bridgetown', 'Bolivia' => 'La Paz', 'Brazil' => 'Brasilia'}`.
+
+This example demonstrates using the `each_key` method to perform a selection operation on a hash.
+
+--12:37
+
+### 13 ###
+
+```ruby
+countries_and_capitals = {
+  'France' => 'Paris',
+  'Belgium' => 'Brussels',
+  'Morocco' => 'Rabat',
+  'Barbados' => 'Bridgetown',
+  'Peru' => 'Lima',
+  'Bolivia' => 'La Paz',
+  'Brazil' => 'Brasilia'
+}
+
+def begins_with_b(string)
+  string[0] == 'B'
+end
+
+countries_and_capitals.find_all do |country, capital|
+  begins_with_b(country)
+end
+```
+
+
+
+### 14 ###
+
+```ruby
+mailing_campaign_leads = [
+  {name: 'Emma Lopez', email: 'emma.lopez@some_mail.com', days_since_login: 423, mailing_list: true},
+  {name: 'mike richards', email: 'michael.richards@some_mail.com', days_since_login: 23, mailing_list: false},
+  {name: 'JANE WILLIAMS', email: 'jane_w95@my_mail.com', days_since_login: 16, mailing_list: true},
+  {name: 'Ash Patel', email: 'ash_patel@my_mail.com', days_since_login: 22, mailing_list: true}
+]
+
+counter = 0
+
+loop do
+  break if counter == mailing_campaign_leads.size
+  full_name = mailing_campaign_leads[counter][:name]
+  names = full_name.split
+
+  names_counter = 0
+  loop do
+    break if names_counter == names.size
+    name = names[names_counter]
+    names[names_counter] = name.capitalize
+
+    names_counter += 1
+  end
+
+  capitalized_full_name = names.join(' ')
+  mailing_campaign_leads[counter][:name] = capitalized_full_name
+
+  counter += 1
+end
+
+usable_leads = []
+counter = 0
+
+loop do
+  break if counter == mailing_campaign_leads.size
+  last_login = mailing_campaign_leads[counter][:days_since_login]
+  subscribed_to_list = mailing_campaign_leads[counter][:mailing_list]
+
+  if last_login < 60 && subscribed_to_list
+    usable_leads << mailing_campaign_leads[counter]
+  end
+
+  counter += 1
+end
+```
+
+
+
+### 15 ###
+
+```ruby
+mailing_campaign_leads = [
+  {name: 'Emma Lopez', email: 'emma.lopez@some_mail.com', days_since_login: 423, mailing_list: true},
+  {name: 'mike richards', email: 'michael.richards@some_mail.com', days_since_login: 23, mailing_list: false},
+  {name: 'JANE WILLIAMS', email: 'jane_w95@my_mail.com', days_since_login: 16, mailing_list: true},
+  {name: 'Ash Patel', email: 'ash_patel@my_mail.com', days_since_login: 22, mailing_list: true}
+]
+
+mailing_campaign_leads.each do |lead|
+  names = lead[:name].split
+  names.map! { |name| name.capitalize }
+  lead[:name] = names.join(' ')
+end
+
+usable_leads = mailing_campaign_leads.select do |lead|
+  lead[:days_since_login] < 60 && lead[:mailing_list]
+end
+```
+
+
+
+## Lesson 2 ##
+
+### 1 ###
+
+```ruby
+arr = [
+  {one: '1', two: 2},
+  [{four: 5, three: 6}, :three],
+  :three,
+  {2=>:two, 3=>:three}
+]
+
+arr[1][0][:three]
+```
+
+
+
+### 2 ###
+
+```ruby
+todo_lists = [
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  }
+]
+
+todo_lists[0][:todos][2][:name] = 'Orange Juice'
+
+p todo_lists
+```
+
+
+
+
+
+### 3 ###
+
+```ruby
+todo_lists = [
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+]
+
+todo_lists[1].each do |list_key, list_value|
+  if list_key == :todos
+    list_value.each { |todo| todo[:completed] = true }
+  end
+end
+```
+
+
+
+### 4 ###
+
+```ruby
+todo_lists = [
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+]
+
+todo_lists[1][:todos][0][:completed] = true
+todo_lists[1][:todos][1][:completed] = true
+```
+
+
+
+### 5 ###
+
+```ruby
+todo_lists = [
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+]
+
+todo_lists[1][:todos].each do |todo|
+  todo[:completed] = true
+end
+```
+
+
+
+### 6 ###
+
+```ruby
+a = 'hi'
+english_greetings = ['hello', a, 'good morning']
+
+greetings = {
+  french: ['bonjour', 'salut', 'allo'],
+  english: english_greetings,
+  italian: ['buongiorno', 'buonasera', 'ciao']
+}
+
+greetings[:english][1] = 'hey'
+
+greetings.each do |language, greeting_list|
+  greeting_list.each { |greeting| greeting.upcase! }
+end
+
+puts a
+puts english_greetings[1]
+puts greetings[:english][1]
+```
+
+
+
+
+
+### 7 ###
+
+```ruby
+order_data = [
+  {customer_id: 12, customer_name: 'Emma Lopez', order_id: 351, order_date: '12/04/16', order_fulfilled: true, order_value: 135.99},
+  {customer_id: 12, customer_name: 'Emma Lopez', order_id: 383, order_date: '12/04/16', order_fulfilled: true, order_value: 289.49},
+  {customer_id: 12, customer_name: 'Emma Lopez', order_id: 392, order_date: '01/10/17', order_fulfilled: false, order_value: 58.00},
+  {customer_id: 32, customer_name: 'Michael Richards', order_id: 241, order_date: '11/10/16', order_fulfilled: true, order_value: 120.00},
+  {customer_id: 32, customer_name: 'Michael Richards', order_id: 395, order_date: '01/10/17', order_fulfilled: false, order_value: 85.65},
+  # rest of data...
+]
+
+customer_orders = {}
+
+order_data.each do |row|
+  if customer_orders.key?(row[:customer_id])
+    customer_orders[row[:customer_id]][:orders] << {
+      order_fulfilled: row[:order_fulfilled],
+      order_value: row[:order_value]
+    }
+  else
+    customer_orders[row[:customer_id]] = {
+      customer_id: row[:customer_id],
+      customer_name: row[:customer_name],
+      orders: [
+        {
+          order_fulfilled: row[:order_fulfilled],
+          order_value: row[:order_value]
+        }
+      ]
+    }
+  end
+end
+
+customer_orders = customer_orders.values
+```
+
+
+
+
+
+### 8 ###
+
+```ruby
+customer_orders = [
+  {
+    customer_id: 12,
+    customer_name: 'Emma Lopez',
+    orders: [
+      { order_fulfilled: true, order_value: 135.99 },
+      { order_fulfilled: true, order_value: 289.49 },
+      { order_fulfilled: false, order_value: 58.00 }
+    ]
+  },
+  {
+    customer_id: 32,
+    customer_name: 'Michael Richards',
+    orders: [
+      { order_fulfilled: true, order_value: 120.00 },
+      { order_fulfilled: false, order_value: 85.65 }
+    ]
+  },
+  # rest of data...
+]
+
+all_orders = customer_orders.map do |customer_data|
+  order_value = customer_data[:orders].inject(0) do |total, order_data|
+    total + order_data[:order_value]
+  end
+
+  {
+    customer_id: customer_data[:customer_id],
+    customer_name: customer_data[:customer_name],
+    total_order_value: order_value
+  }
+end
+
+```
+
+
+
+
+
+### 9 ###
+
+```ruby
+customer_orders = [
+  {
+    customer_id: 12,
+    customer_name: 'Emma Lopez',
+    orders: [
+      { order_fulfilled: true, order_value: 135.99 },
+      { order_fulfilled: true, order_value: 289.49 },
+      { order_fulfilled: false, order_value: 58.00 }
+    ]
+  },
+  {
+    customer_id: 32,
+    customer_name: 'Michael Richards',
+    orders: [
+      { order_fulfilled: true, order_value: 120.00 },
+      { order_fulfilled: false, order_value: 85.65 }
+    ]
+  },
+  # rest of data...
+]
+
+all_orders = customer_orders.map do |customer|
+  {
+    customer_id: customer[:customer_id],
+    customer_name: customer[:customer_name]
+  }
+end
+
+customer_orders.each_with_index do |data, index|
+  order_value = data[:orders].reduce(0) do |total, order|
+    total + order[:order_value]
+  end
+
+  all_orders[index][:total_order_value] = order_value
+end
+```
+
+
+
+### 10 ###
+
+```ruby
+customer_orders = [
+  {
+    customer_id: 12,
+    customer_name: 'Emma Lopez',
+    orders: [
+      { order_fulfilled: true, order_value: 135.99 },
+      { order_fulfilled: true, order_value: 289.49 },
+      { order_fulfilled: false, order_value: 58.00 }
+    ]
+  },
+  {
+    customer_id: 32,
+    customer_name: 'Michael Richards',
+    orders: [
+      { order_fulfilled: true, order_value: 120.00 },
+      { order_fulfilled: false, order_value: 85.65 }
+    ]
+  },
+  # rest of data...
+]
+
+all_orders = []
+
+customer_orders.each do |customer_data|
+  customer_total_orders = {
+    customer_id: customer_data[:customer_id],
+    customer_name: customer_data[:customer_name],
+    total_order_value: 0
+  }
+
+  customer_data[:orders].each do |order|
+    customer_total_orders[:total_order_value] += order[:order_value]
+  end
+
+  all_orders << customer_total_orders
+end
+```
+
