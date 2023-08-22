@@ -454,7 +454,31 @@ countries_and_capitals.find_all do |country, capital|
 end
 ```
 
+On line 1, local variable `countries_and_capitals` is initialized to the hash:
 
+```ruby
+{
+  'France' => 'Paris',
+  'Belgium' => 'Brussels',
+  'Morocco' => 'Rabat',
+  'Barbados' => 'Bridgetown',
+  'Peru' => 'Lima',
+  'Bolivia' => 'La Paz',
+  'Brazil' => 'Brasilia'
+}
+```
+
+On lines 11-13, the `begins_with_b` method is defined using the `def` keyword and one parameter `string`. Within the body of the definition, on line 12, the `String#[]` method is called on `string` with `0` passed as argument. This method call returns a new string containing the first character from the caller. Chained on this method is a call to `String#==` with `'B'` passed as argument, returning Boolean `true` if the caller is considered equal to the argument, `false` otherwise. Since this is the last evaluated expression in the method definition, it forms the implicit return value. This method therefore checks whether the string passed as argument starts with uppercase letter `"B"`, returning `true` if so, `false` otherwise.
+
+After the method definition, on line 15, the `Enumerable#find_all` method is called on `countries_and_capitals` with a `do...end` block. The `find_all` method iterates through the calling hash passing each key-value pair to the block, with the key object being assigned to the parameter `country` and the value object assigned to parameter `capital`. `find_all` considers the truthiness of the block return value, returning a new nested array whose elements are two-element sub-arrays containing the key and value objects for only those key-value pairs whose block iteration returned a truthy value.
+
+Within the block, the `begins_with_b` method is called with the string currently referenced by `country` passed as argument. This returns `true` if the `country` string starts with `"B"`, `false` otherwise. This is the last evaluated expression in the block and so forms the return value.
+
+This invocation of `find_all` therefore returns a new array containing sub-arrays containing a key object and associated value object of only those key-value pairs from the calling hash whose key begins with `"B"`: `[["Belgium", "Brussels"], ["Barbados", "Bridgetown"], []"Bolivia", "La Paz"], ["Brazil", "Brasilia"]]`
+
+This example demonstrates how the `find_all` method uses the return value from the block; specifically the method considers the truthiness of the block return value for purposes of selection.
+
+--14:38
 
 ### 14 ###
 
@@ -504,7 +528,53 @@ loop do
 end
 ```
 
+On line 1, local variable `mailing_campaign_leads` is initialized to the array of hashes: 
 
+```ruby
+[
+  {name: 'Emma Lopez', email: 'emma.lopez@some_mail.com', days_since_login: 423, mailing_list: true},
+  {name: 'mike richards', email: 'michael.richards@some_mail.com', days_since_login: 23, mailing_list: false},
+  {name: 'JANE WILLIAMS', email: 'jane_w95@my_mail.com', days_since_login: 16, mailing_list: true},
+  {name: 'Ash Patel', email: 'ash_patel@my_mail.com', days_since_login: 22, mailing_list: true}
+]
+
+```
+
+Next, local variable `counter` is initialized to integer `0`.
+
+After these variable initializations, on line 10, the `loop` method is invoked with a `do...end` block. The `Kernel#loop` method performs iteration, executing the block until a control expression breaks out of the loop. This is achieved with a `break` condition on the first line within the block, which checks whether `counter` is equal to the size of the `mailing_campaign_leads` array; if so, the `break` keyword is executed and we break from the loop. The `counter` is incremented on the final line of the block, line 27.
+
+On the second line of the block, line 12, the `Array#[]` element reference method is called on `mailing_campaign_leads` with `counter` passed as argument. This call returns the element at the index represented by the integer referenced by `counter`. Chained on the hash that is returned is a call to hash element reference method `Hash#[]` with the symbol `:name` passed as argument. This call returns the value object associated with the key `:name`, which will be a string. This string is used to initialize local variable `full_name`.
+
+Next, on line 13, local variable `names` is initialized to the return value of calling `String#split` on `full_name`; this return value will be a new array containing the first and last name substrings from the calling string split on whitespace.
+
+On line 15, local variable `names_counter` is initialized to `0`.
+
+Next, on line 16, the `loop` method is called again with a `do...end` block. On line 17, the first line of the second-level block, the `break` condition checks if `names_counter` is equal to the size of the `names` array; if so, we break out of the loop. `names_counter` is incremented on the final line of the second-level block.
+
+On the second line of the second-level block, line 18, local variable `name` is initialized to the return value of calling `Array#[]` with `names_counter` passed as argument, returning the string element at the index given by `names_counter`. Next, element assignment method `Array#[]=` is called on the `names` arrays with `names_counter` passed as the index argument and the return value of calling `String#capitalize` on `name` passed as the object to be reassigned at this index. `capitalize` returns a new string with the first character from the caller, if it is a letter, as an uppercase letter, and any remaining letters as lowercase letters. This operation mutates the `names` array so that the string at index `names_counter` now references a new capitalized string. This second-level `loop` invocation with block therefore performs destructive transformation on the elements of the `names` array, capitalizing the first and last names.
+
+After this, on line 24,  local variable `capitalized_full_name` is initialized to the return value of calling join on the `names` array with a space `' '` passed as argument. This returns a new string containing the values of the two strings from `names` separated by a space between them.
+
+Next, array element method `Array#[]` is called on `mailing_campaign_leads` with `counter` passed as argument, returning the hash at index `counter`. Chained on this hash return value is a call to hash element assignment method `Hash#[]=` with `:name` passed as the key argument and `capitalized_full_name` passed as argument. This mutates the hash so that the value associated with `:name` is now  the capitalized version of the name that was stored there before. Therefore, this first-level `loop` invocation with block performs transformation on the value element associated with the `:name` key of each hash in the `mailing_campaign_leads` array.
+
+After this outer `loop` has finished, on line 30, local variable `useable_leads` is initialized to an empty array. Next, `counter` is reassigned to `0`.
+
+Next, on line 33, `loop` is called again with a block. The `break` condition on the first line within the block checks whether `counter` is equal to the size of the `mailing_campaign_leads` array, breaking from the loop if so. `counter` is incremented on line 42.
+
+Next, on line 35, local variable `last_login` is initialized to the return value of a chain of element reference calls. `Array#[]` is called on `mailing_campaign_leads` with `counter` passed as argument, returning the hash element at index `counter`. Chained on this return value is a call to `Hash#[]` with `:days_since_login` passed as argument. This returns the Integer value-object associated with the key `:days_since_login`. This is used to initialize `last_login`.
+
+Next, local variable `subscribed_to_list` is initialized to the return value of a similar chain of method calls, but the second call, to `Hash[]`, this time has `:mailing_list` passed as argument, returning the associated Boolean value-object, which is assigned to `subscribed_to_list`. 
+
+On line 38, an `if` condition checks that the integer referenced by `last_login` is less than `60` and that `subscribed_to_list` references a truthy value. If both these conditions evaluate as true, then line 39 is executed.
+
+On line 39, the `Array#<<` method is called on `usable_leads`, the argument being the return value of calling `Array#[]` on `mailing_campaign_leads` with `counter` passed as argument. This destructively appends the hash element from `mailing_campaign_leads` at index `counter` to the `useable_leads` array`.
+
+Therefore, this final `loop` invocation performs a selection operation on `campaign_mailing_list`, with `usable_leads` containing only those hash elements from the source array which satisfy the two selection criteria given in the `if` condition on line 38.
+
+This example demonstrates using simple loops, counters, break conditions and conditional control-flow expressions to perform transformation and selection operations on a nested data structure.
+
+--56:07
 
 ### 15 ###
 
