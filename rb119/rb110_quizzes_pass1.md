@@ -597,7 +597,49 @@ usable_leads = mailing_campaign_leads.select do |lead|
 end
 ```
 
+On line 1, local variable `mailing_campaign_leads` is initialized to an array of hashes.
 
+Next, on line 8, the `Array#each` method is called on `mailing_campaign_leads` with a `do...end` block. The `each` method performs iteration, calling the block once for each element in turn with each hash element being assigned to block parameter `lead`. `each` ignores the return value of the block and returns a reference to the caller.
+
+Within the block on line 9, the hash element reference method `Hash#[]` is called on `lead` with `:name` passed as the argument, returning the string value-object associated with the key `:name`. Chained on this return value is a call to `String#split`, which returns a new array containing substrings from the caller divided on whitespace. This array is used to initialize local variable `names`.
+
+Next, on line 10, the mutating `Array#map!` method is called on `names` with a `{...}` block. The `map!` method iterates through the caller passing each element in turn to the block to be assigned to block parameter `name`. `map!` uses the return value from the block to perform destructive transformation, replacing each element in the caller with the object returned by that element's block iteration.
+
+Within the `map!` block, the `String#capitalize` method is called on `name`, returning a new string based on the caller, with the first character, if it is a letter, in uppercase and all remaining letter characters in lowercase. This is the last evaluated expression in the block and so forms the return value.
+
+On line 11, the mutating `Hash[]=` element assignment method is called on `lead` to update the value object associated with `:name`, passed as the key argument; the value argument is the return value of calling `String#join` on `names` with a single space character passed as the separator argument, returning a new string with the strings from the caller joined around a space.
+
+Therefore, this `each` invocation with a block performs transformation on the string associated with the key `:name` in each hash in the `mailing_campaign_leads` array, replacing each full name with a new string where both first and last name are capitalized:
+
+```
+[
+  {name: 'Emma Lopez', email: 'emma.lopez@some_mail.com', days_since_login: 423, mailing_list: true},
+  {name: 'Mike Richards', email: 'michael.richards@some_mail.com', days_since_login: 23, mailing_list: false},
+  {name: 'Jane Williams', email: 'jane_w95@my_mail.com', days_since_login: 16, mailing_list: true},
+  {name: 'Ash Patel', email: 'ash_patel@my_mail.com', days_since_login: 22, mailing_list: true}
+]
+```
+
+
+
+Next, on  line 14, local variable `useable_leads` is initialized to the return value of calling `Array#select` on the `mailing_campaign_leads` array. `select` iterates through the caller passing each hash element in turn to the block to be assigned to the block parameter `lead`. `select` considers the truthiness of the block return value in order to perform selection, returning a new array whose elements are only those elements from the caller whose block iteration returned a truthy value.
+
+Within the block, on line 15, is the `&&` logical operator combines two Boolean expressions. The left operand is the return value of a comparison expression that checks whether the integer value-object associated with the key `:days_since_login` in the hash currently referenced by `lead` is less than `60`, returning `true` if so, `false` otherwise. The right hand expression is the Boolean value-object associated with the key `:mailing_list` in `lead`. Only if both the left- and right-hand expressions evaluate to `true` will the combined expression evaluate to `true`, `false` otherwise. This is the last evaluated expression in the block and so forms the return value.
+
+This `select` invocation therefore returns a new array containing only those hash elements from the caller where the `:days_since_login` integer is less than `60` and the Boolean object associated with `:mailing_list` is `true`:
+
+```
+[
+  {name: 'Jane Williams', email: 'jane_w95@my_mail.com', days_since_login: 16, mailing_list: true},
+  {name: 'Ash Patel', email: 'ash_patel@my_mail.com', days_since_login: 22, mailing_list: true}
+]
+```
+
+
+
+This example demonstrates performing transformation and selection on a nested data structure.
+
+29:58
 
 ## Lesson 2 ##
 
@@ -614,7 +656,23 @@ arr = [
 arr[1][0][:three]
 ```
 
+On line 1, local variable `arr` is initialized to the array:
 
+```ruby
+[
+  {one: '1', two: 2},
+  [{four: 5, three: 6}, :three],
+  :three,
+  {2=>:two, 3=>:three}
+]
+
+```
+
+Next, on line 8, the `Array#[]` element reference method is called on `arr` with `1` passed as argument. This returns the element at index `1`: `[{four: 5, three: 6}, :three]`. Chained on this return value is another call to `Array#[]` with `0` passed as argument, returning the first element `{four: 5, three: 6}`. Chained on this return value is a call to `Hash#[]` with the symbol `:three` passed as argument. This returns the value-object associated with the key-object `:three`, which is the integer `6`.
+
+This example demonstrates chaining element reference methods to return an innermost element in a nested data structure.
+
+--4:23
 
 ### 2 ###
 
@@ -636,7 +694,67 @@ todo_lists[0][:todos][2][:name] = 'Orange Juice'
 p todo_lists
 ```
 
+On line 1, local variable `todo_lists` is initialized to the array:
 
+```ruby
+[
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  }
+]
+```
+
+Next, the `Array#[]` element reference method is called on `todo_lists` with `0` passed as argument, returning the first and only element:
+
+```ruby
+ {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+ }
+```
+
+Chained on this return value is a call to `Hash#[]` element reference method with `:todos` passed as argument, returning the value-object associated with the key `:todos`:
+
+```ruby
+[
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+]
+```
+
+Chained on this return value is a call to `Array#[]` with `2` passed as argument, returning the element at index `2`: `{:id=>3, :name=>"Apple Juice",:completed=>false}`. Chained on this returned hash is a call to the element assignment method `Hash#[]=1`. Here, this mutating method is used to reassign the value-object associated with the key `:name` in the hash to the new string given in literal notation `'Orange Juice'`. This operation mutates the hash object itself.
+
+Therefore after this chain of method calls, when `todo_lists` is passed to the `Kernel#p` method, the output will be:
+
+```ruby
+[
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Orange Juice', completed: false }
+    ]
+  }
+]
+```
+
+This example demonstrates the use of a chain of element reference and element assignment methods in order to mutate inner objects within a nested data structure.
+
+--8:32
 
 
 
@@ -670,7 +788,78 @@ todo_lists[1].each do |list_key, list_value|
 end
 ```
 
+On line 1 local variable `todo_lists` is initialized to the array
 
+```ruby
+todo_lists = [
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+]
+```
+
+Next, on line 21, the `Array#[]` element reference method is called with `1` passed as argument, returning the hash element at index `1`:
+
+```ruby
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+```
+
+
+
+ Chained on this return value is a call to `Hash#each` with a `do...end` block. `each` performs iteration, passing each key-value pair in turn to the block, assigning the key object to block parameter `list_key` and the value object to `list_value`, and executing the block. `each` ignores the return value from the block and returns a reference to the caller.
+
+Within the block, on line 22, an `if` condition checks whether the symbol currently referenced by `list_key` is equal to `:todos`. If so, control passes to line 23. Here, the `Array#each` method is called on the array referenced by `list_value` with a `{...}` block. `each` passes each hash element to the block to be assigned to the block parameter `todo`.
+
+Within the inner block, hash element assignment method `Hash#[]=` is called on `todo` with `:completed` passed as the key argument and `true` passed as the value argument. This mutates the Hash object so that the existing `:completed` key is now associated with the Boolean object `true`.
+
+Therefore, these nested calls to `each` perform destructive transformation so that the state of the `todos_list` is now 
+
+```ruby 
+[
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: true },
+      { id: 2, name: 'English', completed: true }
+    ]
+  }
+]
+```
+
+This example demonstrates using nested iterator methods to transform the innermost elements of a nested data structure.
+
+--13:04
 
 ### 4 ###
 
@@ -699,7 +888,107 @@ todo_lists[1][:todos][0][:completed] = true
 todo_lists[1][:todos][1][:completed] = true
 ```
 
+On line 1, local variable `todo_lists` is initialized to an array of hashes:
 
+```ruby
+[
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+]
+```
+
+Next, on line 21, the `Array#[]` element reference method is called on `todo_lists` with `1` passed as argument, returning the hash element at index 1:
+
+```ruby
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+```
+
+Chained on this return value is a call to `Hash#[]` element reference method with symbol `:todos` passed as argument, returning the Array object associated to the key `:todos`:
+
+```ruby
+[
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+]
+```
+
+Chained on this return value is a call to `Array#[]` with `0` passed as argument, returning the first hash `{ id: 1, name: 'Math', completed: false }`. Chained on this return value is a call to the mutating `Hash#[]=` element assignment method with `:completed` passed as the key argument and Boolean object `true` passed as value argument. This destructively reassigns the key `:completed` so that it is now associated with `true`.
+
+Next, on line 22, the `Array#[]` element reference method is called on `todo_lists` with `1` passed as argument, returning the hash element at index `1`:
+
+```ruby
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+```
+
+Chained on this return value is a call to `Hash#[]` with `:todos` passed as argument, returning the array value-object associated with the key-object `:todos`:
+
+```ruby
+[
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+]
+todo_lists[1][:todos][1][:completed] = true
+```
+
+Chained on this return value is a call to `Array#[]` with `1` passed as argument, returning the hash element at index `1`: `{ id: 2, name: 'English', completed: false }`. Chained on this return value is a call to the mutating hash element assignment method `Hash#[]=` with `:completed` passed as the key argument and `true` passed as the value argument. This destructively reassigns the existing key `:completed` so that it is now associated with the object `true`.
+
+Therefore, at the end of these two chains of element reference and assignment, the state of the nested data structure referenced by `todo_lists ` is:
+
+```ruby 
+[
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: true },
+      { id: 2, name: 'English', completed: true }
+    ]
+  }
+]
+
+```
+
+This example demonstrates using a chain of element reference and assignment methods in order to reassign the innermost elements of a nested data structure.
+
+--13:16
 
 ### 5 ###
 
