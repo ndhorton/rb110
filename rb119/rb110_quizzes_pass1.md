@@ -597,7 +597,50 @@ usable_leads = mailing_campaign_leads.select do |lead|
 end
 ```
 
+<<<<<<< HEAD
 On line 1, local variable `mailing_campaign_leads` is initialized to an array of hashes.
+=======
+On line 1, local variable `mailing_campaign_leads` is initialized to the array of hashes.
+
+Next, the `Array#each` method is invoked on `mailing_campaign_leads` with a `do...end` block. `each` performs iteration, executing the block once for each hash element, which is passed in and assigned to the block parameter `lead`. `each` ignores the return value of the block and returns a reference to the caller.
+
+Within the block, on line 9, hash element reference method `Hash#[]` is called on the hash currently referenced by `lead` with `:name` passed as the key argument, returning the associated value, a String object. Chained on this return value is a call to `String#split` with no argument, returning a new array with the string from the caller divided into substrings divided on the default delimiter of one or more contiguous whitespace characters. Local variable `names` is then initialized to the array of strings returned by `split`.
+
+Next, the mutating `Array#map!` method is called on `names` with a `{...}` block. The `map!` method iterates through the calling collection passing each element in turn to the block to be assigned to the parameter `name`. `map!` uses the return value of the block for purposes of transformation, destructively replacing the element in the calling array with the object returned by that element's block iteration. Within the block, the `String#capitalize` method is called on `name`, returning a new string based on the caller whose first character, if it is a letter, will now be in uppercase in the new string and all remaining letters will be lowercase. This is the last evaluated expression in the block and so forms the return value. So after this call to `map!`, the first-name and last-name strings in `names` will be new, capitalized strings.
+
+On line 11, the `Array#join` method is called on `names` with a string literal containing a single space passed as the separator argument, returning a new string formed by joining the substrings from the caller with a single space character between consecutive substrings. This new string is then reassigned with the `Hash#[]=` method to be the value-object now associated with the key `:name` in the hash currently referenced by `lead`. This is the last evaluated expression in the block and so forms the return value, but `each` ignores this.
+
+Thus after this call to `each`, every string associated with the key `:name` in every hash in the `mailing_campaign_list` array will have both the first-name and surname capitalized:
+
+```ruby
+[
+  {name: 'Emma Lopez', email: 'emma.lopez@some_mail.com', days_since_login: 423, mailing_list: true},
+  {name: 'Mike Richards', email: 'michael.richards@some_mail.com', days_since_login: 23, mailing_list: false},
+  {name: 'Jane Williams', email: 'jane_w95@my_mail.com', days_since_login: 16, mailing_list: true},
+  {name: 'Ash Patel', email: 'ash_patel@my_mail.com', days_since_login: 22, mailing_list: true}
+]
+```
+
+
+
+After this, on line 14, local variable `useable_leads` is initialized to the return value of calling `Array#select` on `mailing_campaign_leads` with a `do...end` block. `select` iterates through the calling collection passing each hash element to the block to be assigned to the block parameter `lead`. `select` considers the truthiness of the block return value, returning a new array whose elements are only those elements from the caller whose block iteration returned a truthy value.
+
+Within the block, on line 15, two conditional expression are connected with a logical `&&`. The first checks whether the integer associated with the key `:days_since_login` in the hash currently referenced by `lead` is less than `60`, returning Boolean `true` if so, `false` otherwise. The second expression checks whether the Boolean object associated with the key `:mailing_list` in the `lead` hash evaluates as true. The overall expression evaluates as true only if both of these expressions evaluate as true. If the first expression evaluates as false, the overall expression immediately evaluates as false. This is the last evaluated expression in the block and so forms the return value, which `select` uses to determine whether each element will be included in the new array it will return.
+
+Therefore this `select` invocation returns a new array with only those hashes from the caller whose `:days_since_login` key is associated with an integer less than 60, and whose `:mailing_list` key is associated to Boolean object `true`:
+
+```ruby
+[
+  {name: 'Jane Williams', email: 'jane_w95@my_mail.com', days_since_login: 16, mailing_list: true},
+  {name: 'Ash Patel', email: 'ash_patel@my_mail.com', days_since_login: 22, mailing_list: true}
+]
+```
+
+This new array is assigned to variable `useable_leads`.
+
+This example demonstrates using an invocation of `each` to transform the value elements in a hash, and using `select` to perform selection within the context of a nested data structure.
+
+>>>>>>> d95f1d6b1615e208f7cf84180b0f146d87328079
 
 Next, on line 8, the `Array#each` method is called on `mailing_campaign_leads` with a `do...end` block. The `each` method performs iteration, calling the block once for each element in turn with each hash element being assigned to block parameter `lead`. `each` ignores the return value of the block and returns a reference to the caller.
 
@@ -656,7 +699,18 @@ arr = [
 arr[1][0][:three]
 ```
 
+<<<<<<< HEAD
 On line 1, local variable `arr` is initialized to the array:
+=======
+On line 1, we initialize local variable `arr` to an an array.
+
+Next, on line 8, the array element reference method `Array#[]` is called on `arr` with `1` passed as argument, returning the element at index `1`, the array `[{four: 5, three: 6}, :three]`. Chained on this return value is another call to `Array#[]` with `0` passed as argument, returning hash object `{four: 5, three: 6}`. Chained on this return value is a call to `Hash#[]` with `:three` passed as argument, returning the value-object associated to the key `:three`, which is the integer `6`.
+
+This example demonstrates using a chain of collection reference methods to return an innermost element in a nested data structure.
+
+--4:34
+
+>>>>>>> d95f1d6b1615e208f7cf84180b0f146d87328079
 
 ```ruby
 [
