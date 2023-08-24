@@ -597,9 +597,8 @@ usable_leads = mailing_campaign_leads.select do |lead|
 end
 ```
 
-<<<<<<< HEAD
 On line 1, local variable `mailing_campaign_leads` is initialized to an array of hashes.
-=======
+
 On line 1, local variable `mailing_campaign_leads` is initialized to the array of hashes.
 
 Next, the `Array#each` method is invoked on `mailing_campaign_leads` with a `do...end` block. `each` performs iteration, executing the block once for each hash element, which is passed in and assigned to the block parameter `lead`. `each` ignores the return value of the block and returns a reference to the caller.
@@ -639,8 +638,6 @@ Therefore this `select` invocation returns a new array with only those hashes fr
 This new array is assigned to variable `useable_leads`.
 
 This example demonstrates using an invocation of `each` to transform the value elements in a hash, and using `select` to perform selection within the context of a nested data structure.
-
->>>>>>> d95f1d6b1615e208f7cf84180b0f146d87328079
 
 Next, on line 8, the `Array#each` method is called on `mailing_campaign_leads` with a `do...end` block. The `each` method performs iteration, calling the block once for each element in turn with each hash element being assigned to block parameter `lead`. `each` ignores the return value of the block and returns a reference to the caller.
 
@@ -699,9 +696,8 @@ arr = [
 arr[1][0][:three]
 ```
 
-<<<<<<< HEAD
 On line 1, local variable `arr` is initialized to the array:
-=======
+
 On line 1, we initialize local variable `arr` to an an array.
 
 Next, on line 8, the array element reference method `Array#[]` is called on `arr` with `1` passed as argument, returning the element at index `1`, the array `[{four: 5, three: 6}, :three]`. Chained on this return value is another call to `Array#[]` with `0` passed as argument, returning hash object `{four: 5, three: 6}`. Chained on this return value is a call to `Hash#[]` with `:three` passed as argument, returning the value-object associated to the key `:three`, which is the integer `6`.
@@ -709,8 +705,6 @@ Next, on line 8, the array element reference method `Array#[]` is called on `arr
 This example demonstrates using a chain of collection reference methods to return an innermost element in a nested data structure.
 
 --4:34
-
->>>>>>> d95f1d6b1615e208f7cf84180b0f146d87328079
 
 ```ruby
 [
