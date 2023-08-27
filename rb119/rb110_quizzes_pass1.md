@@ -1066,7 +1066,84 @@ todo_lists[1][:todos].each do |todo|
 end
 ```
 
+On line 1, local variable `todo_lists` is initialized to the array of hashes
 
+```ruby
+[
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+]
+```
+
+Next, on line 21, the `Array#[]` element reference method is called on `todo_lists` with `1` passed as argument, returning the hash element at index `1`:
+
+```ruby
+{
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+    ]
+  }
+
+```
+
+Chained on this return value is a call to `Hash#[]` with `:todos` passed as argument, returning the value object, an array, associated with the key object `:todos`:
+
+```ruby
+[
+      { id: 1, name: 'Math', completed: false },
+      { id: 2, name: 'English', completed: false }
+]
+```
+
+Chained on this return value is a call to the `Array#each` method with a `do...end` block. The `each` method performs iteration, passing each element in turn to the block to be assigned to the block paramter `todo`. `each` ignores the return value from the block and returns a reference to the caller.
+
+Within the block, on line 22, the mutating hash element assignment method `Hash#[]=` is called on `todo` with `:completed` passed as the key argument and the boolean object true passed as the value argument. This mutates this hash so that  the existing key `:completed` is now associated with the object `true`.
+
+Therefore at the end of this code, the state of the `todo_lists` array is:
+
+```ruby 
+todo_lists = [
+  {
+    id: 1,
+    list_name: 'Groceries',
+    todos: [
+      { id: 1, name: 'Bread', completed: false },
+      { id: 2, name: 'Milk', completed: false },
+      { id: 3, name: 'Apple Juice', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    list_name: 'Homework',
+    todos: [
+      { id: 1, name: 'Math', completed: true },
+      { id: 2, name: 'English', completed: true }
+    ]
+  }
+]
+```
+
+This example demonstrates using chained calls to element reference and element assignment methods to mutate nested data structures.
+
+--8:25
 
 ### 6 ###
 
@@ -1091,9 +1168,33 @@ puts english_greetings[1]
 puts greetings[:english][1]
 ```
 
+On line 1, local variable `a` is initialized to the string `"hi"`.
 
+Next, on line 2, local variable `english_greetings` is initialized to the array `["hello", a, "good morning"]`. Currently, the reference at index `1` of the `english_greetings` array and variable `a` both reference the same String object.
 
+On line 3, local variable `greetings` is initialized to the hash
 
+```ruby
+{
+  french: ['bonjour', 'salut', 'allo'],
+  english: english_greetings,
+  italian: ['buongiorno', 'buonasera', 'ciao']
+}
+```
+
+Currently, the value associated with the key `:english` in the `greetings` hash and the `english_greetings` variable both reference the same Array object.
+
+On line 10, the destructive `Hash#[]=` element assignment method is called on `greetings` with `:english` passed as argument, returning the array referenced by the hash key `:english` as well as the `english_greetings` variable. Chained on this return value is a call to the element assignment method `Array#[]=` with `1` passed as the index argument and the string `hey` passed as the element argument. This reassigns the reference at index `1` of the array to point to the new string given in literal notation `hey`. This mutates the array referenced in by the `english_greetings` variable and the `:english` key in `greetings`.
+
+Next, the `Hash#each` method is called on the `greetings` hash with a `do...end` block. The `each` method performs iteration, passing each key-value pair in turn to the block, the key being assigned to parameter `language` and the value to `greeting_list`. `each` ignores the return value of the block and returns a reference to the caller.
+
+Within the block, on line 13, the `Array#each` method is called on `greeting_list` with a `{...}` block, passing each element in turn to the block parameter `greeting`. Within the block, the destructive `String#upcase!` method is called on `greeting`, mutating the String object such that all letter characters are now in uppercase.
+
+Therefore, at the end of this code, when `a` is passed to the `Kernel#puts` method on line 16, the output will still be `hi`. When `english_greetings[1]` is passed to `puts` on line 17 the output will be `HEY`. When `greetings[:english][1]` is passed to `puts` on the final line, the output will also be `HEY`, since this is the same String object referenced as argument on line 17.
+
+This example demonstrates how, in Ruby, variables, the indexes of Arrays, and the associative references of Hashes act as pointers to objects.
+
+--24:46
 
 ### 7 ###
 
@@ -1132,7 +1233,116 @@ end
 customer_orders = customer_orders.values
 ```
 
+On line 1, local variable `order_data` is initialized to an array of hashes. Next, on line 10, local variable `custom_orders` is initialized to an empty hash.
 
+On line 12, the `Array#each` method is called on `order_data` with a `do...end` block. `each` performs iteration, passing hash each element in turn to the block to be assigned to parameter `row` and executing the block. `each` ignores the block return value and returns a reference to the caller.
+
+Within the block, on line 13, an `if` condition checks whether the return value of calling the `Hash#key?` predicate method on `customer_orders` with `row[:customer_id]` passed as argument evaluates as true. The  `Hash#[]` method called on `row` returns the value object associated with key `:customer_id` and it is this value object that is returned and passed as argument to `key?`. `key?` will return `true` if the value object associated with `:customer_id` in the hash currently referenced by `row` is present as a key object in the `customer_orders` hash, `false` otherwise. If `key?` returns `true`, this means the key has already been created on a previous iteration where the `else` branch was followed, so now the `if` branch is followed and the code on lines 14-17 is executed.
+
+On line 14, the `Hash#[]` method is called on `customer_orders`, again with `row[:customer_id]` passed as argument;  the nested call to `Hash#[]` returns the Integer value-object from `row` associated with the key-object `:customer_id` and passes it as argument to the call to `Hash#[]` on `customer_orders` as the key argument, returning the associated hash value. Chained on this return value is another call to `Hash#[]` with `:orders` passed as the key argument, returning the associated Array object. Chained on this return value is a call to `Array#<<`, which destructively appends a new hash given in literal notation `{order_fulfilled: row[:order_fulfilled], order_value: row[:order_value]}` to the array. This adds a new hash to the array of `:orders`, grouping order details from the hash currently referenced by `row`, with the same `:customer_id`, within the nested data structure that this `each` call with block is building.
+
+If `key?` returns `false` on line 13, the `else` branch is followed and the code on lines 19-28 is executed. Here, a new key-value pair is created in `customer_orders` for the integer associated with `:customer_id` in `row`. To achieve this, the `Hash#[]=` element assignment method is called on `customer_orders` with `row[:customer_id]` passed as the key argument and a hash given in literal notation passed as the value argument:
+
+```ruby
+{
+      customer_id: row[:customer_id],
+      customer_name: row[:customer_name],
+      orders: [
+        {
+          order_fulfilled: row[:order_fulfilled],
+          order_value: row[:order_value]
+        }
+      ]
+}
+```
+
+This creates the array referenced by `:orders` in the new hash that is the value part of a new key-value pair in `customer_orders` for this `:customer_id` to which the `if` branch then adds more order details if other hash elements in the `order_data` array share the same `:customer_id`.
+
+After this `each` invocation finishes iteration, the state of the `customer_orders` hash will be
+
+```ruby
+{
+    12 => {
+      customer_id: 12,
+      customer_name: "Emma Lopez",
+      orders: [
+        {
+          order_fulfilled: true,
+          order_value: 135.99
+        },
+        {
+          order_fulfilled: true,
+          order_value: 289.49
+        },
+        {
+          order_fulfilled: false,
+          order_value: 58.00
+        }
+      ]
+    },
+    32 => {
+      customer_id: 32,
+      customer_name: "Michael Richards",
+      orders: [
+        {
+          order_fulfilled: true,
+          order_value: 120.00
+        },
+        {
+          order_fulfilled: false,
+          order_value: 85.65
+        }
+      ]
+    }
+}
+```
+
+Finally, on line 32, the `customer_orders` variable is reassigned to the return value of calling `Hash#values` on `customer_orders`, which returns a new array object whose elements are only the value objects from the key-value pairs in the caller.
+
+Therefore, at the end of this code, the state of the new array reassigned to `customer_orders` will be:
+
+```ruby
+{
+    {
+      customer_id: 12,
+      customer_name: "Emma Lopez",
+      orders: [
+        {
+          order_fulfilled: true,
+          order_value: 135.99
+        },
+        {
+          order_fulfilled: true,
+          order_value: 289.49
+        },
+        {
+          order_fulfilled: false,
+          order_value: 58.00
+        }
+      ]
+    },
+    {
+      customer_id: 32,
+      customer_name: "Michael Richards",
+      orders: [
+        {
+          order_fulfilled: true,
+          order_value: 120.00
+        },
+        {
+          order_fulfilled: false,
+          order_value: 85.65
+        }
+      ]
+    }
+}
+```
+
+
+
+This example demonstrates using iterator method `each` to iteratively build a new nested data structure that restructures data from another nested data structure.
+
+--51:45
 
 
 
@@ -1174,7 +1384,44 @@ end
 
 ```
 
+On line 1, local variable `customer_orders` is initialized to an array of hashes.
 
+Next, on line 22, local variable `all_orders` is initialized to the return value of invoking `Array#map` on `customer_orders` with a `do...end` block. `map` iterates through the calling array passing each hash element in turn to the block to be assigned to block parameter `customer_data`. `map` uses the return value of the block in order to perform  transformation, returning a new array whose elements are the return values from the block iterations.
+
+Within the block on line 23, local variable `order_value` is initialized to the return value of a chain of method calls. The `Hash#[]` element reference method is called on `customer_data` with `:orders` passed as argument, returning the value array associated with the key `:orders`. Chained on this return value is a call to `Array#inject` with `0` passed as argument and a `do...end` block. `inject` iterates through the calling collection passing each element in turn to be assigned to block parameter `order_data`. Since `inject` was called with an argument, on the first iteration the argument `0` is passed to the block to be assigned to the block parameter `total`; on each iteration thereafter, the return value from the previous block iteration is assigned to `total`; finally, `inject` returns the return value of the final block iteration.
+
+Within the block, on line 24, the `Integer#+` method is invoked on `total`; the argument passed is the return value of calling `Hash#[]` on `order_data` with `:order_value` passed as argument, returning an integer. This is the last evaluated expression in the block and so forms its return value. Thus, this `inject` invocation iterates through the array referenced by `:orders` and sums the integers in each hash element that are associated with the key `:order_value`, creating a sum total of the expenditure of all of that customer's orders.
+
+The last evaluated expression in the block which forms the return value of the `map` block is a hash literal that makes use of the integer value calculated by the call to `inject` and assigned to variable `order_value`:
+
+```ruby
+  {
+    customer_id: customer_data[:customer_id],
+    customer_name: customer_data[:customer_name],
+    total_order_value: order_value
+  }
+```
+
+Thus, after this call to `map`, the nested data structure assigned to `all_orders` will be:
+
+```ruby
+[
+   {
+    customer_id: 12,
+    customer_name: "Emma Lopez",
+    total_order_value: 483.48
+  },
+  {
+    customer_id: 32,
+    customer_name: "Michael Richards",
+    total_order_value: 205.65
+  }
+]
+```
+
+This example demonstrates using nested iterators to transform a nested data structure.
+
+--21:08
 
 
 
@@ -1218,7 +1465,84 @@ customer_orders.each_with_index do |data, index|
 end
 ```
 
+On line 1, local variable `customer_orders` is initialized to the array of hashes
 
+```ruby
+customer_orders = [
+  {
+    customer_id: 12,
+    customer_name: 'Emma Lopez',
+    orders: [
+      { order_fulfilled: true, order_value: 135.99 },
+      { order_fulfilled: true, order_value: 289.49 },
+      { order_fulfilled: false, order_value: 58.00 }
+    ]
+  },
+  {
+    customer_id: 32,
+    customer_name: 'Michael Richards',
+    orders: [
+      { order_fulfilled: true, order_value: 120.00 },
+      { order_fulfilled: false, order_value: 85.65 }
+    ]
+  },
+  # rest of data...
+]
+```
+
+where each hash element represents a customer.
+
+Next, on line 22, local variable `all_orders` is initialized to the return value of calling `Array#map` on `customer_orders` with a `do...end` block. `map` iterates through the caller, passing each hash element in turn to the block to be assigned to the block parameter `customer`. `map` uses the return value of the block to perform transformation, returning a new array whose elements are the return values from the block iterations.
+
+Within the block, on line 23, a new hash is constructed in literal notation. The first key-value pair, on line 24, has for key  a symbol given in literal notation `:customer_id`. The value part is the return value of calling the `Hash#[]` element reference method on the customer hash currently referenced by `customer` with `:customer_id`, which returns an integer customer id. On line 25, the key is `:customer_name` and the value part is the return value of calling `Hash#[]` on `customer` with `:customer_name` passed as argument, which returns a string. This new hash is the last evaluated expression in the `map` block and so forms its return value.
+
+This invocation of `map` therefore makes new shallow copies of each customer hash from the `customer_orders` array except with only the `:customer_id` and `:customer_name` key value pairs present; the `:orders` pair is missing. These new hashes are returned in a new array, where each index of each hash element corresponds to the index of the same customer's hash in `customer_orders`. This new array is assigned to `all_orders`:
+
+```ruby
+[
+  {
+    customer_id: 12,
+    customer_name: 'Emma Lopez'
+  },
+  {
+    customer_id: 32,
+    customer_name: 'Michael Richards'
+  },
+  # rest of data...
+]
+```
+
+
+
+ After this, on line 29, the `Array#each_with_index` method is called on `customer_orders` with a `do...end` block. `each_with_index` performs iteration, passing each element from the caller and its integer index to the block to be assigned to block parameters `data` and `index` respectively. `each` ignores the return value from the block and returns a reference to the caller.
+
+Within the block, on line 30, local variable `order_value` is called on the return value of calling `Array#reduce` on the array that is the value part of the key-value pair in `data` whose key is `:orders` with `0` passed as argument. The `Array#reduce` method iterates through the caller passing each hash element in turn to the block to be assigned to the second block parameter `order`. On the first iteration, the argument `0` is passed to the first block parameter `total`. On every subsequent iteration, the return value of the previous block is assigned to `total`. `reduce` then returns the final block return value as the method return value.
+
+Within the block, on line 31, the only expression, which thus forms the block return value, adds the Numeric referenced by `total` to the Float return value of calling `Hash#[]` on `order` with `:order_value` passed as argument. Therefore, this `reduce` invocation returns the sum of every order's monetary value, taken from the `:orders` array in the `customer_orders` hash as a Float and assigns it to the `order_value` variable.
+
+On line 34, a new key-value pair is created in the hash in the `all_orders` array at the same `index` as the current `data` hash is at in the `customer_orders` array. To achieve this, the `Hash#[]=` method is invoked on the `all_orders` array's hash at this `index`, with the new symbol `:total_order_value` as the key and the Float referenced by `order_value` passed as the value argument.
+
+Therefore, this `each_with_index` returns a reference to the `all_orders` array whose state is now: 
+
+```ruby
+[
+  {
+    customer_id: 12,
+    customer_name: 'Emma Lopez',
+    total_order_value:  483.48
+  },
+  {
+    customer_id: 32,
+    customer_name: 'Michael Richards',
+    total_order_value: 205.65
+  },
+  # rest of data...
+]
+```
+
+This example demonstrates using nested iterator methods to construct a new nested data structure based on data from another nested data structure.
+
+39:17
 
 ### 10 ###
 
