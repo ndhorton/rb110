@@ -1585,3 +1585,68 @@ customer_orders.each do |customer_data|
 end
 ```
 
+On line 1, local variable `customer_orders` is initialized to the array of hashes
+
+```ruby
+[
+  {
+    customer_id: 12,
+    customer_name: 'Emma Lopez',
+    orders: [
+      { order_fulfilled: true, order_value: 135.99 },
+      { order_fulfilled: true, order_value: 289.49 },
+      { order_fulfilled: false, order_value: 58.00 }
+    ]
+  },
+  {
+    customer_id: 32,
+    customer_name: 'Michael Richards',
+    orders: [
+      { order_fulfilled: true, order_value: 120.00 },
+      { order_fulfilled: false, order_value: 85.65 }
+    ]
+  },
+  # rest of data...
+]
+```
+
+On line 22, local variable `all_orders` is initialized to an empty array.
+
+Next, on line 24, the `Array#each` method is called on `customer_orders` with a `do...end` block. `each` performs iteration over the elements in the caller, passing each hash element to the block in turn to be assigned to the block parameter `customer_data`. `each` ignores the return value of the block and returns a reference to the caller.
+
+Within the block, on line 25, local variable `customer_total_orders` is initialized to the hash literal
+
+```ruby
+{
+    customer_id: customer_data[:customer_id],
+    customer_name: customer_data[:customer_name],
+    total_order_value: 0
+}
+```
+
+Next, on line 31, the element reference method `Hash#[]` is called on `customer_total_orders` with `:orders` passed as argument. This returns the array associated with the `:orders` key. Chained on this return value is a call to `Array#each` with a `do...end` block, with the block parameter `order` to which is assigned in turn each hash element.
+
+Within this second-level `each` block, on line 32, the `Hash#[]=` method is called on `customer_data` with `:total_order_value` passed as argument and `+=` syntactic sugar is used to add to the Numeric value referenced by the key `:total_order_value` the Float return value of calling `Hash#[]` on the hash currently referenced by `order` with `:order_value` passed as argument, before associating the key `:total_order_value` to the sum. This inner `each` invocation with block therefore iterates through each of the hashes in the `:orders` array and adds the Float referenced by key `:order_value` to the Numeric referenced by `:total_order_value` in the `customer_total_orders` hash.
+
+On the last line of the block, the `Array#<<` method is called on the `all_orders` array with `customer_total_order` passed as argument, destructively appending the hash that has just be constructed and updated to the `all_orders` array.
+
+Once the outer `each` call has ceased iteration, therefore, the state of the `all_orders` array will be
+
+```ruby  
+[
+    {
+    customer_id: "Emma Lopez",
+    customer_name: 12,
+    total_order_value: 483.48
+    },
+    customer_id: "Michael Richars",
+    customer_name: 32,
+    total_order_value: 205.65
+    },
+    # rest of data ...
+]
+```
+
+This example demonstrates using nested iterators to build a new nested data structure based on the data of an existing nested data structure.
+
+--23:01
