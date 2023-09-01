@@ -26,7 +26,17 @@ This example demonstrates the use of the `Array#sort` method.
 ['c', 'a', 'e', 'b', 'd'].sort
 ```
 
+On line 1, the `Array#sort` method is invoked on the array of strings given in literal notation: `['c', 'a', 'e', 'b', 'd']`.
 
+When called without a block, `sort` returns a new array object containing the elements from the caller sorted in ascending order. In order to achieve this, `sort` makes a series of comparisons between pairs of elements using the `<=>` method of the elements being compared. Since the elements are strings, the `String#<=>` method is used.
+
+The `String#<=>` method makes character-wise comparison between two strings based on ASCII character table order: the later the placement in the ASCII table, the greater the value. Character-wise comparison means that the characters at index `0` in the two strings are compared and if no difference is found then the characters at index `1` are compared and so on until a difference is found. If no difference is found up to the length of the shorter string, the longer string is considered greater. If no difference is found in equal-sized strings, they are considered equal. The `String#<=>` method makes this comparison between caller and argument in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, and `1` if the caller is greater. If the argument cannot be compared to the caller, the `<=>` method returns `nil`. If `sort` receives a `nil` return value from `<=>`, this causes `sort` to throw an `ArgumentError`.
+
+Therefore, this `sort` invocation returns a new array containing the string elements from the caller in ascending ASCII table order: `["a", "b", "c", "d", "e"]`.
+
+This example demonstrates how Ruby's `sort` method returns a sorted array.
+
+--3:20
 
 ### 3 ###
 
@@ -48,7 +58,15 @@ This example demonstrates the use of the `Array#sort` method.
 ['a', 1].sort
 ```
 
+On line 1, the `Array#sort`method is invoked on array literal `['a', 1]`.
 
+When called without a block, `sort` returns a new array object containing the elements from the caller sorted in ascending order. In order to achieve this, `sort` makes a series of comparisons between pairs of elements using the `<=>` method of the elements being compared.
+
+However, in this instance, since `sort` would here need to compare two incomparable classes of object, the `<=>` method of whichever object is the caller in the comparison will return `nil`, causing the `sort` method to throw an `ArgumentError`.
+
+This example demonstrates the limits of Ruby's `sort` method; specifically, it demonstrates that if `sort` has to compare two elements using the `<=>` method of classes that cannot be compared, then an exception will be thrown.
+
+--3:28
 
 
 
@@ -109,7 +127,19 @@ This example demonstrates how Ruby's `sort` method interacts with a given block.
 end
 ```
 
+On line 1, the `Array#sort` method is called on the array of integers given in literal notation `[2, 5, 3, 4, 1]` with a `do...end` block.
 
+When called with a block, `sort` passes each pair of elements that need to be compared to the block to be assigned to the block parameters `a` and `b`. `sort` uses the return value from the block as though it were the return value of calling the `<=>` method on the object assigned to the first parameter `a` with the object assigned to the second parameter `b` passed as argument. If the block returns `-1`, the object passed to the first block parameter is considered lesser; if the block returns `0`, they are considered equal; if the block returns `1`, the object passed to the first block parameter is considered greater. The `sort` method then returns a new array object with the elements from the caller sorted in what would be ascending order if the return values from the block were the return values from simple calls to `<=>`.
+
+Within the block, on line 2, a string involving string interpolation is passed to the `Kernel#puts` method with string representations of the objects currently referenced by `a` and `b` interpolated into the string. This message is output to the screen, and `puts` returns `nil` since `puts` always returns `nil`. However, this return value is ignored.
+
+Next, the `Integer#<=>` method is called on `a` with `b` passed as argument. The `Integer#<=>` method makes a comparison based on numeric value between the calling integer and the argument in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, `1` if the caller is greater. If the object passed as argument cannot be compared to the caller, `<=>` returns `nil`. If `sort` receives a `nil` return from `<=>`, this causes `sort` to throw an `ArgumentError`.
+
+This expression is the last evaluated expression in the block and so forms the block return value. Therefore, since the return value of the block is the same as `sort` would receive from `<=>` if `sort` had been called without a block, `sort` will return a new array containing the elements from the caller sorted in ascending order: `[1, 2, 3, 4, 5]`.
+
+This example demonstrates how Ruby's `sort` method interacts with a block.
+
+--6:34
 
 ### 8 ###
 
@@ -117,7 +147,17 @@ end
 ['arc', 'bat', 'cape', 'ants', 'cap'].sort
 ```
 
+On line 1, the `Array#sort` method is invoked on array of strings `['arc', 'bat', 'cape', 'ants', 'cap']`.
 
+When called without a block, sort returns a new array object containing the elements from the caller sorted in ascending order. In order to achieve this, sort makes a series of comparisons between pairs of elements using the <=> method of the elements being compared. Since the elements are strings, the `String#<=>` method will be used.
+
+The `String#<=>` method makes character-wise comparison between two strings based on ASCII character table order: the later the placement in the ASCII table, the greater the value. Character-wise comparison means that the characters at index `0` in the two strings are compared and if no difference is found then the characters at index `1` are compared and so on until a difference is found. If no difference is found up to the length of the shorter string, the longer string is considered greater. If no difference is found in equal-sized strings, they are considered equal. The `String#<=>` method makes this comparison between caller and argument in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, and `1` if the caller is greater. If the argument cannot be compared to the caller, the `<=>` method returns `nil`. If `sort` receives a `nil` return value from `<=>`, this causes `sort` to throw an `ArgumentError`.
+
+Therefore, this sort invocation returns a new array object containing the elements from the caller sorted according to character-wise ASCII values in ascending order: `["ants", "arc", "bat", "cap", "cape"]`
+
+This example demonstrates how Ruby's `sort` method behaves when called on an array of strings.
+
+--6:26
 
 ### 9 ###
 
@@ -125,7 +165,21 @@ end
 [['a', 'cat', 'b', 'c'], ['b', 2], ['a', 'car', 'd', 3], ['a', 'car', 'd']].sort
 ```
 
+On line 1, the `Array#sort` method is called on the array of arrays `[['a', 'cat', 'b', 'c'], ['b', 2], ['a', 'car', 'd', 3], ['a', 'car', 'd']]`.
 
+When called without a block, `sort` returns a new array object containing the elements from the caller sorted in ascending order. In order to achieve this, `sort` makes a series of comparisons between pairs of elements using the `<=>` method of the elements being compared. Here, the elements are arrays, so the `Array#<=>` method will be used.
+
+`Array#<=>` compares Array objects in an element-wise manner. The elements at index `0` of the two arrays are compared and if no difference is found then the elements at index `0` are compared and so on until a difference is found. If no difference is found up to the end of the shorter array then the longer array is considered greater. If no difference is found in equally-sized arrays, they are considered equal. `Array#<=>` makes this comparison between caller and argument in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, `1` if the caller is greater. If the argument object cannot be compared to the calling array, `Array#<=>` returns `nil`. These element comparisons are made using the `<=>` method proper to the elements being compared. If the `<=>` method call comparing individual elements finds that the elements cannot be compared, it returns `nil`, in which case the `Array#<=>` method also returns `nil`. A `nil` return from the `<=>` method causes `sort` to throw an `ArgumentError`.
+
+Here, the arrays all have differences in value before the element-wise comparison would reach incomparable elements (i.e. the Integer objects which cannot be compared to the String objects). Therefore, all comparisons will be made using the `String<=>` method.
+
+The `String#<=>` method makes character-wise comparison between two strings based on ASCII character table order: the later the placement in the ASCII table, the greater the value. Character-wise comparison means that the characters at index `0` in the two strings are compared and if no difference is found then the characters at index `1` are compared and so on until a difference is found. If no difference is found up to the length of the shorter string, the longer string is considered greater. If no difference is found in equal-sized strings, they are considered equal. The `String#<=>` method makes this comparison between caller and argument in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, and `1` if the caller is greater. If the argument cannot be compared to the caller, the `<=>` method returns `nil`. If `sort` receives a `nil` return value from `<=>`, this causes `sort` to throw an `ArgumentError`.
+
+Therefore, this `sort` invocation returns a new array containing the array elements from the caller sorted in ascending order: `[['a', 'car', 'd'], ['a', 'car', 'd', 3], ['a', 'cat', 'b', 'c'],  ['b', 2]]`.
+
+This example demonstrates how Ruby's `sort` method performs sorting when called on an array of arrays.
+
+--6:18
 
 ### 10 ###
 
@@ -135,7 +189,21 @@ end
 end
 ```
 
+On line 1, the `Enumerable#sort_by` method is invoked on array `['cot', 'bed', 'mat']` with a `do...end` block.
 
+The `sort_by` method returns a new array whose elements are the elements from the calling collection sorted according to the criterion given in the block. In order to do this, `sort_by` passes each element in turn to the block to be assigned to the block parameter `word`. `sort_by` then uses the return value of each element's block iteration as a sort key that is used in place of the  associated element in the series of comparisons `sort_by` makes to determine the relative valuation of elements. These comparisons are made with the `<=>` method of the sort key objects returned by the block. `sort_by` then returns a new array containing the elements from the caller sorted in ascending order of the value of the sort-key object associated to each element during the sorting process.
+
+Within the block, the `Array#[]` element reference method is called on the string element currently referenced by `word` with `1` passed as argument, returning a new string containing the character from the caller at index `1`. This is the last evaluated expression in the block and so forms the return value of the block.
+
+Therefore, the elements in this array will be sorted according to the ASCII table value of each string's second character only. Order is determined by the `String#<=>` method.
+
+The `String#<=>` method makes character-wise comparison between two strings based on ASCII character table order: the later the placement in the ASCII table, the greater the value. Character-wise comparison means that the characters at index `0` in the two strings are compared and if no difference is found then the characters at index `1` are compared and so on until a difference is found. If no difference is found up to the length of the shorter string, the longer string is considered greater. If no difference is found in equal-sized strings, they are considered equal. The `String#<=>` method makes this comparison between caller and argument in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, and `1` if the caller is greater. If the argument cannot be compared to the caller, the `<=>` method returns `nil`.
+
+Therefore, this `sort_by` invocation will return a new array containing the elements from the caller sorted according to the sort-keys returned by the block: `["mat", "bed", "cot"]`.
+
+This example demonstrates how Ruby's `sort_by` method interacts with a block.
+
+--9:13
 
 ### 11 ###
 
@@ -147,7 +215,25 @@ people.sort_by do |_, age|
 end
 ```
 
+On line 1, local variable `people` is initialized to the hash `{ Kate: 27, john: 25, Mike:  18 }`.
 
+Next, on line 3, the `Enumerable#sort_by` method is invoked on `people` with a `do...end` block.
+
+The `sort_by` method returns a new array whose elements are the elements from the calling collection sorted according to the criterion given in the block. In order to do this, `sort_by` passes each key and value pair in turn to the block to be assigned to the block parameters `_` and `age` respectively. The parameter name `_` conventionally indicates that this parameter will not be used in the block.
+
+`sort_by` then uses the return value of each element's block iteration as a sort key that is used in place of the associated element in the series of comparisons `sort_by` makes to determine the relative valuation of elements. These comparisons are made with the `<=>` method of the sort key objects returned by the block. `sort_by` then returns a new array containing the elements from the caller sorted in ascending order of the value of the sort-key object associated to each element during the sorting process. In the case of a hash, the key-value pairs will be two-element sub-array elements in the new array, with the key at the first index, the value at the second index.
+
+Within the block, on line 4, the expression `age` is the only evaluated expression in the block and so forms the return value.
+
+Therefore, the key-value pairs in the caller will be sorted according to the numeric value of the value-part, using the `Integer#<=>` method. The `Integer#<=>` method makes a comparison based on numeric value between the calling integer and the argument in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, `1` if the caller is greater. If the object passed as argument cannot be compared to the caller, `<=>` returns `nil`.
+
+So this `sort_by` invocation will return a new array of arrays containing the key-value pairs sorted according to the value of the sort-keys returned by the block: `[[:Mike, 18], [:john, 25], [:Kate, 27]]`.
+
+This example demonstrates how Ruby's `sort_by` method interacts with a block.
+
+--7:48
+
+## 
 
 ## Nested Data Structures ###
 
@@ -303,7 +389,7 @@ end
 ### 4 ###
 
 ```ruby
-my_arr = [[18, 7], [3, 12]].each do |arr|
+[[18, 7], [3, 12]].each do |arr|
   arr.each do |num|
     if num > 5
       puts num
@@ -312,7 +398,23 @@ my_arr = [[18, 7], [3, 12]].each do |arr|
 end
 ```
 
+On line 1, the `Array#each` method is called on array of arrays `[[18, 7], [3, 12]]` with a `do...end` block. The `each` method performs iteration, passing each array element in turn to the block parameter `arr` and executing the block once for each element.
 
+Within the block, on line 2, the  `each` method is called on the array currently referenced by `arr` with a `do...end` block. Each integer element in turn is passed to the second-level block parameter `num`.
+
+Within this second-level block, on line 3, an `if` condition checks whether the integer currently referenced by `num` is greater than `5`. If so, line 4 is executed. On line 4, `num` is passed to the `Kernel#puts` method, which outputs a string representation of the integer to the screen.
+
+Therefore these nested `each` calls with nested blocks output to screen:
+
+```
+18
+7
+12
+```
+
+This example demonstrates using nested iterator methods with blocks to iterate over the innermost elements in a nested data structure, with each level of iterator corresponding to each level of the nested data structure.
+
+--5:36
 
 ### 5 ###
 
@@ -466,6 +568,8 @@ p remove_evens!([1,1,2,3,4,6,8,9])
 # expected return value [1, 1, 3, 9]
 # actual return value [1, 1, 3, 6, 9]
 ```
+
+
 
 
 
