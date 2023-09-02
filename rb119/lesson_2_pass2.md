@@ -832,7 +832,21 @@ end
 p new_arr
 ```
 
+On line 1, local variable `arr` is initialized to the array of arrays `[[2], [3, 5, 7, 12], [9], [11, 13, 15]]`.
 
+On line 3, local variable `new_arr` is initialized to the return value of calling `Array#map` on `arr` with a `do...end` block. The `map` method iterates through the caller passing each sub-array element to the block to be assigned to block parameter `element`. `map` uses the return value of the block to perform transformation, returning a new array whose elements are the objects returned by the block iterations.
+
+Within the `map` block, on line 4, the `Array#select `method is called on the sub-array currently referenced by `element` with a `do...end` block. The `select` method iterates through the caller passing each integer element in turn to the block to be assigned to block parameter `num`. `select` considers only the truthiness of the block return value to perform selection, returning a new array object whose elements are only those elements from the caller whose block returned a truthy value.
+
+Within the `select` block, the expression `num % 3 == 0` acts as a divisibility test; if the integer currently referenced by `num` is divisible by `3` with no remainder, the modulo operator will return `0` and the equality operator will return boolean `true`; otherwise, the equality operator method returns `false`. This is the last evaluated expression in the block and so forms the `select` block return value.
+
+This `select` call therefore returns a new array object with only those integer elements from the caller that are cleanly divisible by `3`. This is the last evaluated expression in the `map` block and so forms the return value.
+
+The `map` invocation therefore returns a new array with new subarrays containing only the integer elements from the `arr` sub-arrays that are divisible by `3`.
+
+This example demonstrates using nested iterators with blocks to perform selection on the innermost elements of a nested data structure.
+
+--8:43
 
 ### 11b ###
 

@@ -2,6 +2,8 @@
 
 When called without a block, `sort` returns a new array object containing the elements from the caller sorted in ascending order. In order to achieve this, `sort` makes a series of comparisons between pairs of elements using the `<=>` method of the elements being compared.
 
+
+
 Here the elements are ... so the ... method is used.
 
 
@@ -60,26 +62,6 @@ The `sort_by` method returns a new array whose elements are the elements from th
 
  In the case of a hash, the key-value pairs will be two-element sub-array elements in the new array, with the key at the first index, the value at the second index.
 
-## **`String#upto`**
-
-The `Stringupto` method iterates over a sequence of String objects that are the result of successive calls to the `String#succ` method. On the first iteration the caller is passed to the block to be assigned to the block parameter. On the second iteration, the return value of calling `succ` on the caller is passed to the block. On the third, the return value of calling `succ` on the previous return value of `succ` is passed to the block, and so on. Iteration stops when the string passed as argument is reached, which must therefore be a string whose character-wise ASCII valuation is greater than the caller. `upto` ignores the return value from the block, and returns a reference to the calling string.
-
-## **`String#succ`**
-
-The `String#succ` method returns a new string that is the successor to the caller; this is determined by incrementing characters.
-
-The character to be incremented will be either the rightmost alphanumeric character or, if there are none, the rightmost character. A digit will be incremented to the next digit; if the digit is '9', this will be rolled over to `0`, carrying to increment the character to the left. If it is necessary in order to express the carry, another digit is inserted to the left of the digit that is rolling over.
-
-The successor to a letter character is the next letter of the same case. Letters will rollover and carry similarly to digits, inserting another letter of the same case to the left of the letter that is rolling over if this is necessary to express the carry.
-
-Carrying can occur between alphabetic and numeric characters, so `"a9".succ` will return `"b0"`.
-
-The successor to a non-alphanumeric character is the next character in character set, rolling over and carrying if necessary.
-
-If called on an empty string, the return value will be a new empty string.
-
-`succ` will thus return a new string with with either the rightmost alphanumeric character incremented, carrying and rolling over if necessary, or if there are no alphanumerics, the rightmost character incremented, carrying and rolling over if necessary.
-
 ## **`Array#min`/`Enumerable#min` without block**
 
 The `min` method returns the element in the calling collection determined to be the least in value. To determine this, the `min` method makes a series of comparisons between pairs of elements by invoking the `<=>` method appropriate to the objects being compared, with one element as caller and one as argument. The `<=>` method returns `-1` if the caller is lesser than the argument, `0` if they are equal, `1` if the caller is greater than the argument, and `nil` if they cannot be compared. The `min` method will throw an `ArgumentError` if it receives a `nil` return from any of these comparisons.
@@ -104,6 +86,48 @@ The `max_by` method returns the element from the calling collection determined t
 
 The `minmax_by` method returns a two element array; the first and second elements of this returned array are, respectively, the element from the calling collection determined to be of least value and the element determined to be of greatest value according to a given criterion. To determine this, `minmax_by` passes each element in turn to the given block to be assigned to a parameter; the return value from that block execution forms the criterion by which comparisons between elements are to be made. The `minmax_by` method then makes a series of comparisons in a similar manner to `minmax` except these comparisons are between the block return values associated with each element from the calling collection rather than between the elements themselves. The `minmax_by` method then returns a two-element array whose elements are the two elements determined to be least and greatest according to this comparison criterion.
 
+## `break` and `next` keywords ##
+
+`break` - the `break` keyword breaks out of the current block or loop. `break` can accept an argument that forms the return value of the overall expression. Used in the block given to a method invocation, `break` breaks out of the entire method invocation with block expression, not merely the current block iteration.
+
+`next` - the `next` keyword skips to the next iteration. `next` can accept an argument that will be used as the return value of the current block iteration 
+
+## Nested Data Structures, Nested Iteration ##
+
+A nested data structure is a collection that contains other collections. An outermost collection may contain collections, which may contain collections, and so on.
+
+If we need to iterate over all the innermost elements in a nested data structure, it becomes necessary to nest iterator methods with blocks, taking care to match the layers of nested iteration to the layers of nesting in the data structure.
+
+
+
+## Shallow Copy and Deep Copy ##
+
+The methods `dup` and `clone` both return a shallow copy of a collection object. This means that the returned collection will be a new object of the caller's class, but the elements of the new collection will be the same objects referenced by the calling collection. The elements are shared between the original collection object and the new copy. A deep copy would mean that, in addition to making a copy of the collection object, all elements in the original collection would be copied, forming new objects in the new collection; there is no equivalently-simple method for making a deep copy of a collection in Ruby.
+
+The principal difference between `dup` and `clone` is that `clone` preserves the frozen state of a frozen object while `dup` does not.
+
+ ## Method Chaining ##
+
+ In Ruby, since every method returns a value, another method call can be chained on the return value of a previously called method. Another method can be chained on that return value, and so on. For example,
+
+```ruby
+str = "so much depends upon"
+
+str2 = str.split.reverse.join(' ')
+puts str2 # upon depends much so
+```
+
+Method chaining is particularly useful in referencing, updating or inserting nested elements in a nested data structure:
+
+```ruby
+structure = [[{a: 1}, {b: 2}], [{c: 3, d: 4}]]
+
+letter = structure[0][1].key(2)
+p letter # :b
+```
+
+
+
 ## **pass-by-reference and \*pass-by-value\***
 
 In a pass-by-value object passing strategy, a copy is made of the object passed to a method as argument and any changes to the object’s value within the method definition are actually being performed on a copy and will not affect the object that was passed as argument.
@@ -117,3 +141,25 @@ In Ruby’s object passing strategy, sometimes called pass-by-reference-value, w
 The call stack is a way of organizing memory such that Ruby can keep track of which method should currently have control and where to resume execution when that method returns. The call stack is a last-in-first-out data structure consisting of stack frames, each pertaining to a method invocation. When a method is called, Ruby updates the current stack frame with the point in the program at which the call was made and pushes a new stack frame to the call stack for the method that has been invoked. If that method calls another method, the point where control should resume is saved in the current frame and another stack frame is pushed to the stack. When the currently executing method returns, its frame is popped from the stack and execution resumes at the point it was called from.
 
 If the number of stack frames exceeds the size of memory allocated to the call stack, a `SystemStackError` is thrown. Blocks, procs and lamdas all use the call stack similarly to methods.
+
+## **`String#upto`**
+
+The `Stringupto` method iterates over a sequence of String objects that are the result of successive calls to the `String#succ` method. On the first iteration the caller is passed to the block to be assigned to the block parameter. On the second iteration, the return value of calling `succ` on the caller is passed to the block. On the third, the return value of calling `succ` on the previous return value of `succ` is passed to the block, and so on. Iteration stops when the string passed as argument is reached, which must therefore be a string whose character-wise ASCII valuation is greater than the caller. `upto` ignores the return value from the block, and returns a reference to the calling string.
+
+## **`String#succ`**
+
+The `String#succ` method returns a new string that is the successor to the caller; this is determined by incrementing characters.
+
+The character to be incremented will be either the rightmost alphanumeric character or, if there are none, the rightmost character. A digit will be incremented to the next digit; if the digit is '9', this will be rolled over to `0`, carrying to increment the character to the left. If it is necessary in order to express the carry, another digit is inserted to the left of the digit that is rolling over.
+
+The successor to a letter character is the next letter of the same case. Letters will rollover and carry similarly to digits, inserting another letter of the same case to the left of the letter that is rolling over if this is necessary to express the carry.
+
+Carrying can occur between alphabetic and numeric characters, so `"a9".succ` will return `"b0"`.
+
+The successor to a non-alphanumeric character is the next character in character set, rolling over and carrying if necessary.
+
+If called on an empty string, the return value will be a new empty string.
+
+`succ` will thus return a new string with with either the rightmost alphanumeric character incremented, carrying and rolling over if necessary, or if there are no alphanumerics, the rightmost character incremented, carrying and rolling over if necessary.
+
+## 
