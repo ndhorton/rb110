@@ -248,7 +248,17 @@ p arr2
 p arr1
 ```
 
+On line 1, local variable `arr` is initialized to the array of strings `["a", "b", "c"]`
 
+Next, on line 2, local variable `arr` is initialized to the return value of invoking the `dup` method on `arr1`. The `dup` method returns a shallow copy of the calling object. Here, a new array object is returned whose elements are the same objects that are elements in the caller. The string objects at each index of `arr1` and `arr2` are the same objects with the same `object_id`.
+
+So when, on line 3, the string element at index `1` of `arr2` has the mutating method `String#upcase!` called on it, the mutation will be reflected when evaluating `arr1`.
+
+Thus, the call to `Kernel#p` on line 5 with `arr2` passed as argument and the call to `p` on line 6 with `arr1` passed as argument will both output `["a", "B", "c"]`; even though the array objects referenced by these two variables are distinct objects, their elements currently are shared between them.
+
+This example demonstrates the effects of making a shallow copy of a collection using Ruby's `dup` method. Whereas a deep copy would mean making a copy of a collection and making copies of its elements, the `dup` method only returns a shallow copy of a collection object, meaning it only copies the object `dup` is called on and not any objects referenced as elements in a collection object.
+
+--8:07
 
 ### 2 ###
 
