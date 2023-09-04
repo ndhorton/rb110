@@ -613,7 +613,21 @@ arr.sort do |a,b|
 end
 ```
 
+On line 1, local variable `arr` is initialized to the array of string representations of numbers `['10', '11', '9', '7', '8']`.
 
+Next, on line 3, the `Array#sort` method is invoked on `arr` with a `do...end` block. When called with a block, `sort` passes each pair of elements that need to be compared to the block to be assigned to the block parameters `a` and `b`.
+
+`sort` uses the return value from the block as though it were the return value of calling the `<=>` method on the object assigned to the first parameter `a` with the object assigned to the second parameter `b` passed as argument. If the block returns `-1`, the object passed to the first block parameter is considered lesser; if the block returns `0`, they are considered equal; if the block returns `1`, the object passed to the first block parameter is considered greater. The `sort` method then returns a new array object with the elements from the caller sorted in what would be ascending order if the return values from the block were the return values from simple calls to `<=>`.
+
+Within the block, the `String#to_i` method is called on the string currently referenced by `b`, returning an Integer conversion of the String representation of a number. The `Integer#<=>` method is chained on this return value, with an Integer conversion of `a` passed as argument.
+
+The `Integer#<=>` method makes a comparison based on numeric value between the calling integer and the argument in order to return a signal value: `-1` if the caller is lesser, `0` if they are equal, `1` if the caller is greater. If the object passed as argument cannot be compared to the caller, `<=>` returns `nil`. If `sort` receives a `nil` return from `<=>`, this causes `sort` to throw an `ArgumentError`.
+
+This is the last evaluated expression in the block and so forms the return value. The effect of this is that `sort` receives a return value from the block for Integer, numerical comparison rather than character-wise, ASCII value-based String comparison, and it receives a comparison where the expected caller and the expected argument have been reversed, reversing the signs of the return values where elements differ in value. Therefore, this `sort` invocation will return a new array containing the String elements from the caller sorted according to the numerical values of the string representations in descending order: `["11", "10", "9", "8", "8"]`
+
+This example demonstrates how Ruby's `sort` method interacts with a block.
+
+--11:00
 
 ### 2 ###
 
@@ -872,7 +886,21 @@ end
 p new_arr
 ```
 
+On line 1, local variable `arr` is initialized to the array of arrays ` [[2], [3, 5, 7, 12], [9], [11, 13, 15]]`.
 
+Next, on line 3, local variable `new_arr` is initialized to the return value of calling `Array#map` on `arr` with a `do...end` block. `map` iterates through the caller passing each sub-array element in turn to the block to be assigned to the block parameter `element`. `map` uses the return value from the block for purposes of transformation, returning a new array whose elements are the objects returned by the block iterations.
+
+Within the `map` block, on line 4, the `Array#reject` method is called on the array `element` with a `do...end` block. `reject` iterates through the caller passing each element in turn to the block to be assigned to the block parameter `num`. `reject` considers the truthiness of the block return value for purposes of selection, returning a new array containing only those elements whose block returned a falsey value.
+
+Within the `reject` block, on line 5, the expression `num % 3 != 0` functions as a reverse divisibility test to match the reversed selection logic of the `reject` method. If the integer currently referenced by `num` is cleanly divided by `3` without remainder then the `!=` operator method will return `false`, `true` if there is a remainder from the modulo operation. This is the last evaluated expression in the block and so forms the return value.
+
+This invocation of `reject` therefore returns a new array whose elements are only those integer elements from the caller  that are cleanly divisible by `3`. This then forms the block return value for the outer, `map` block.
+
+This `map` invocation therefore returns a new array of new sub-arrays containing only numbers that are divisible by `3`: `[[], [3, 12], [9], [15]]`.
+
+This example demonstrates using nested iterators with blocks to perform selection on the innermost elements of a nested data structure.
+
+--12;12
 
 
 
@@ -907,9 +935,23 @@ end
 p new_arr
 ```
 
+On line 1, local variable `arr` is initialized to the array of arrays `[[1, 6, 9], [6, 1, 7], [1, 8, 3], [1, 5, 9]]`. Next, on line 3, local variable `new_arr` is initialized to the return value of calling `Enumerable#sort_by` on `arr` with a `do...end` block.
 
+The `sort_by` method returns a new array whose elements are the elements from the calling collection sorted according to the criterion given in the block. In order to do this, `sort_by` passes each element in turn to the block to be assigned to the block parameter `sub_arr`.
 
+`sort_by` then uses the return value of each element's block iteration as a sort key that is used in place of the associated element in the series of comparisons `sort_by` makes to determine the relative valuation of elements. These comparisons are made with the `<=>` method of the sort key objects returned by the block. `sort_by` then returns a new array containing the elements from the caller sorted in ascending order of the value of the sort-key object associated to each element during the sorting process.
 
+Within the `sort_by` block, on line 4, the `Array#select` method is called on `sub-arr` with a `do...end` block. `select` iterates through the caller passing each element in turn to the block to be assigned to block parameter `num`. `select` considers the truthiness of the block return value, returning a new array whose elements are only those elements from the caller whose block returned a truthy value.
+
+Within the `select` block, on line 5, the `Integer#odd?` predicate method is called on the integer currently referenced by `num`, returning `true` if the integer is odd, `false` otherwise. This is the last evaluated expression in the `select` block and so forms the block return value. This call to `select` thus returns a new array containing only the odd integers from the caller.
+
+Therefore, the `select` invocation returns a new array object for each `sub_arr` in `arr`, which then forms the sort-key for the sub-array element in `arr` when `sort_by` performs sorting.
+
+This `sort_by` invocation therefore returns a new array whose elements are the sub-arrays from the caller sorted as though they contained only their odd integer elements.
+
+So when `new_arr` is passed to `Kernel#p` on line 9, the output will be `[[1, 8, 3], [1, 5, 9], [6, 1, 7], [1, 6, 9]]`
+
+--9:30
 
 ### 14 ###
 
