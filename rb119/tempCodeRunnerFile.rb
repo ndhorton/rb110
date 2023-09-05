@@ -1,1 +1,0 @@
-read_pathname = "#{__dir__}/overseas-trade-indexes-March-2023-quarter-provisional-csv.csv"
