@@ -1,13 +1,9 @@
-def all_intersections(string1, string2)
-  characters1 = string1.chars
-  characters2 = string2.chars
-  result = []
-  characters1.each do |char1|
-    characters2.each do |char2|
-      if char1 == char2
-        result << char1
-      end
-    end
-  end
-  result
+def words_and_spaces(string)
+  string.scan(/\s+|\S+/)
 end
+
+def words_and_spaces(string)
+  string.split(/\b/)
+end
+
+p words_and_spaces("hello   and  \t\nwelcome")
