@@ -29,7 +29,7 @@ rules:
 
 Examples / test cases:
 
-c a m e l s 
+c a m e l s
 H a v e
 H u m p s
 
@@ -52,28 +52,28 @@ Join words to a single string with separator '-'
 Return that string
 =end
 
+# def kebabize(camel)
+#   characters = camel.chars.select { |character| character =~ /[a-zA-Z]/ }
+#
+#   words = []
+#   buffer = ''
+#   characters.each do |character|
+#     if character =~ /[a-z]/
+#       buffer << character
+#     else
+#       words << buffer
+#       buffer = character.downcase
+#     end
+#   end
+#   words << buffer
+#
+#   words.join('-')
+# end
+# 
 def kebabize(camel)
   characters = camel.chars.select { |character| character =~ /[a-zA-Z]/ }
 
-  words = []
-  buffer = ''
-  characters.each do |character|
-    if character =~ /[a-z]/
-      buffer << character
-    else
-      words << buffer
-      buffer = character.downcase
-    end
-  end
-  words << buffer
-
-  words.join('-')
-end
-
-def kebabize(camel)
-  characters = camel.chars.select { |character| character =~ /[a-zA-Z]/ }
-
-  slices = characters.slice_when { |a, b| b =~ /[A-Z]/ }
+  slices = characters.slice_when { |_, b| b =~ /[A-Z]/ }
   words = slices.map { |word| word.join.downcase }
 
   words.join('-')
