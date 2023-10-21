@@ -94,6 +94,34 @@ def repeated_substring_pattern(string)
   end
 end
 
+# LS student video, split it into 2 loops
+def repeated_substring_pattern(string)
+  substrings = []
+  1.upto(string.length / 2) do |substring_length|
+    next unless string.length % substring_length == 0
+    substrings << string[0, substring_length]
+  end
+
+  substrings.each do |substring|
+    repeats = string.length / substring.length
+    return true if substring * repeats == string
+  end
+
+  false
+end
+
+# Clearest solution
+def repeated_substring_pattern(string)
+  (1..substring.size / 2).do |slice_size|
+    next unless string.size % slice_size == 0
+
+    repeats = string.size / slice_size
+    return true if string[0, slice_size] * repeats == string
+  end
+
+  false
+end
+
 p repeated_substring_pattern('abab') == true
 p repeated_substring_pattern('aba') == false
 p repeated_substring_pattern('aabaaba') == false
