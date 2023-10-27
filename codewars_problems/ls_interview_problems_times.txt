@@ -1,0 +1,102 @@
+Problem 1 - 16:44
+Problem 2 - 15:06
+Problem 3 - 21:09
+Problem 4 - 19:57
+
+# Making my own each_cons - quite fiddly
+
+def each_cons(array, n)
+  return array if array.size < n
+
+  n.upto(array.size) do |limit|
+    current_group = array.slice(limit - n, n)
+    yield(current_group)
+  end
+
+  array
+end
+
+# def each_cons(array, n)
+#   return array if array.size < n
+
+#   current_group = array.take(n)
+#   working_array = array.drop(n)
+#   yield(current_group)
+#   working_array.each do |element|
+#     current_group.shift
+#     current_group << element
+#     yield(current_group)
+#   end
+
+#   array
+# end
+
+arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+each_cons(arr, 5) { |group| p group }
+# arr.each_cons(5) { |group| p group }
+
+# Closest Pair
+# first method is what I wrote ( O(n^2) )
+# second two should be O(n log n)
+
+def closest_numbers(numbers)
+  smallest_difference = (numbers[0] - numbers[1]).abs
+  pair = [numbers[0], numbers[1]]
+  numbers.each_with_index do |current_number, current_index|
+    numbers.each_with_index do |search_number, search_index|
+      next if current_index == search_index
+      search_difference = (current_number - search_number).abs
+      if search_difference < smallest_difference
+        smallest_difference = search_difference
+        pair = [current_number, search_number]
+      end
+    end
+  end
+  pair
+end
+
+def closest_numbers(numbers)
+  indexes = {}
+  numbers.each_with_index { |number, index| indexes[number] = index }
+  sorted_numbers = numbers.sort
+  smallest_difference = (sorted_numbers[1] - sorted_numbers[0]).abs
+  closest_pair = [sorted_numbers[0], sorted_numbers[1]]
+  (2...sorted_numbers.size).each do |index|
+    current_difference = (sorted_numbers[index] - sorted_numbers[index - 1]).abs
+    if current_difference < smallest_difference
+      closest_pair = [sorted_numbers[index - 1], sorted_numbers[index]]
+      smallest_difference = current_difference
+    end
+  end
+  if indexes[closest_pair[1]] < indexes[closest_pair[0]]
+    closest_pair.reverse
+  else
+    closest_pair
+  end
+end
+
+def find_closest_pair(numbers)
+  smallest_difference = (numbers[0] - numbers[1]).abs
+  closest_pair = [numbers[0], numbers[1]]
+  numbers.each_cons(2) do |first_number, second_number|
+    current_difference = (first_number - second_number).abs
+    if current_difference < smallest_difference
+      smallest_difference = current_difference
+      closest_pair = [first_number, second_number]
+    end
+  end
+  closest_pair
+end
+
+def closest_numbers(numbers)
+  indexes = {}
+  numbers.each_with_index { |number, index| indexes[number] = index }
+
+  closest_pair = find_closest_pair(numbers.sort)
+
+  if indexes[closest_pair.last] < indexes[closest_pair.first]
+    closest_pair.reverse
+  else
+    closest_pair
+  end
+end
