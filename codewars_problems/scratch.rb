@@ -48,12 +48,60 @@
 #   fibonacci(n - 1) + fibonacci(n - 2)
 # end
 
-def pair_sum(numbers, target_sum)
-  seen = {}
-  numbers.each do |current_number|
-    compliment = target_sum - current_number
-    return [compliment, current_number] if seen[compliment]
-    seen[current_number] = true
+# def pair_sum(numbers, target_sum)
+#   seen = {}
+#   numbers.each do |current_number|
+#     compliment = target_sum - current_number
+#     return [compliment, current_number] if seen[compliment]
+#     seen[current_number] = true
+#   end
+#   nil
+# end
+
+# def closest_pair(numbers)
+#   indexes = Hash.new(0)
+#   numbers.each_with_index { |number, index| indexes[number] = index }
+#
+#   numbers = numbers.sort
+#
+#   closest = [numbers[0], numbers[1]]
+#   smallest_difference = (numbers[0] - numbers[1]).abs
+#   (2...numbers.size).each do |index|
+#     current_difference = (numbers[index - 1] - numbers[index]).abs
+#     if current_difference < smallest_difference
+#       smallest_difference = current_difference
+#       closest = [numbers[index - 1], numbers[index]]
+#     end
+#   end
+#
+#   if indexes[closest.first] > indexes[closest.last]
+#     closest.reverse
+#   else
+#     closest
+#   end
+# end
+#
+# p closest_pair([106, 92, 3, 99, 33, 77, 44, 22, 2])
+
+
+def length_of_longest_substring(s)
+  longest_length = 0
+  buffer = ''
+  s.each_char do |char|
+    p buffer
+    unless buffer.include?(char)
+      buffer << char
+      next
+    end
+    if buffer.size > longest_length
+      longest_length = buffer.size
+    end
+    buffer = char
   end
-  nil
+  if buffer.size > longest_length
+    longest_length = buffer.size
+  end
+  longest_length
 end
+
+p length_of_longest_substring("dvdf")
