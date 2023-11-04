@@ -83,25 +83,102 @@
 #
 # p closest_pair([106, 92, 3, 99, 33, 77, 44, 22, 2])
 
+#
+# def length_of_longest_substring(s)
+#   longest_length = 0
+#   buffer = ''
+#   s.each_char do |char|
+#     p buffer
+#     unless buffer.include?(char)
+#       buffer << char
+#       next
+#     end
+#     if buffer.size > longest_length
+#       longest_length = buffer.size
+#     end
+#     buffer = char
+#   end
+#   if buffer.size > longest_length
+#     longest_length = buffer.size
+#   end
+#   longest_length
+# end
+#
+# p length_of_longest_substring("dvdf")
 
-def length_of_longest_substring(s)
-  longest_length = 0
-  buffer = ''
-  s.each_char do |char|
-    p buffer
-    unless buffer.include?(char)
-      buffer << char
-      next
+=begin
+
+1234
+number of digits = floor(log_10(1234)) + 1
+
+Iterate 4 times
+
+
+=end
+
+# get digits in right order
+# def digits(number)
+#   return [0] if number.zero?
+#   number = number.abs
+
+#   digit_count = Math.log10(number).floor + 1
+#   divisor = 10 ** (digit_count - 1)
+#   result = []
+#   digit_count.times do
+#     digit = number / divisor
+#     number %= divisor
+#     divisor /= 10
+#     result << digit
+#   end
+
+#   result
+# end
+
+# def digits_with_reverse(number)
+#   return [0] if number.zero?
+#   number = number.abs
+
+#   result = []
+#   while number > 0
+#     digit = number % 10
+#     number /= 10
+#     result << digit
+#   end
+
+#   result.reverse
+# end
+
+# t = Time.now
+# p digits(0) == [0]
+# p digits(-23) == [2, 3]
+# p digits(1234) == [1, 2, 3, 4]
+# p digits(98765432198723746253749) == 98765432198723746253749.to_s.chars.map(&:to_i)
+# p digits(2983742736545291028374629348362634927364103784) == 2983742736545291028374629348362634927364103784.to_s.chars.map(&:to_i)
+# p digits(1) == [1]
+# puts "#digits: #{"%.10f" % (Time.now - t)}"
+
+# t = Time.now
+# p digits_with_reverse(0) == [0]
+# p digits_with_reverse(-23) == [2, 3]
+# p digits_with_reverse(1234) == [1, 2, 3, 4]
+# p digits_with_reverse(98765432198723746253749) == 98765432198723746253749.to_s.chars.map(&:to_i)
+# p digits_with_reverse(2983742736545291028374629348362634927364103784) == 2983742736545291028374629348362634927364103784.to_s.chars.map(&:to_i)
+# p digits_with_reverse(1) == [1]
+# puts "#digits_with_reverse: #{Time.now - t}"
+
+ROWS = [
+  %w( q w e r t y u i o p).sort.join.freeze,
+  %w( a s d f g h j k l).sort.join.freeze,
+  %w( z x c v b n m).sort.join.freeze
+].freeze
+
+def find_words(words)
+  result = []
+  words.each do |word|
+    sorted_word = word.downcase.chars.uniq.sort.join
+    if ROWS.any? { |row| /#{sorted_word}/ }
+      result << word
     end
-    if buffer.size > longest_length
-      longest_length = buffer.size
-    end
-    buffer = char
   end
-  if buffer.size > longest_length
-    longest_length = buffer.size
-  end
-  longest_length
+  result
 end
-
-p length_of_longest_substring("dvdf")
